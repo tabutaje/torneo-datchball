@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torneo de colpbol</title>
+<meta name="description" content="Torneo de colpbol en clase para 4º, 5º y 6º de Primaria: reglas, calendario, actas, clasificación con juego limpio y roles de equipo.">
+<meta name="theme-color" content="#0f766e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%230f766e'/%3E%3Cpath d='M50 6a44 44 0 000 88M6 50h88' stroke='%23fff' stroke-width='7' fill='none'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --ink:#15201c; --muted:#5e6d66;
+  --line:#dfe4e0; --accent:#0f766e; --accent-soft:#e3f1ee; --on-accent:#ffffff;
+  --win:#1b7f4b; --draw:#8a6d12; --loss:#9a3b3b;
+  --radius:14px; --shadow:0 1px 2px rgba(16,24,20,.06),0 8px 24px rgba(16,24,20,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#101513; --panel:#171e1b; --ink:#e8efeb; --muted:#9fb0a8;
+    --line:#2a342f; --accent:#4fd1c5; --accent-soft:#17302d; --on-accent:#06211e;
+    --win:#56d98c; --draw:#e0c158; --loss:#f08a8a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101513; --panel:#171e1b; --ink:#e8efeb; --muted:#9fb0a8;
+  --line:#2a342f; --accent:#4fd1c5; --accent-soft:#17302d; --on-accent:#06211e;
+  --win:#56d98c; --draw:#e0c158; --loss:#f08a8a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink);
+  font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+header{background:var(--accent);color:var(--on-accent);padding:22px 0 18px}
+header h1{margin:0;font-size:clamp(1.3rem,4.4vw,1.9rem);line-height:1.25;letter-spacing:-.01em}
+header p{margin:6px 0 0;opacity:.9;font-size:.95rem}
+nav{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav button{
+  flex:0 0 auto;background:none;border:0;border-bottom:3px solid transparent;
+  color:var(--muted);font:inherit;font-weight:600;font-size:.92rem;
+  padding:12px 12px 9px;cursor:pointer;white-space:nowrap;
+}
+nav button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+main{padding:22px 0 64px}
+section[role="tabpanel"]{display:none}
+section[role="tabpanel"].on{display:block}
+h2{font-size:1.25rem;margin:0 0 4px;letter-spacing:-.01em}
+h3{font-size:1.02rem;margin:22px 0 8px}
+.lead{color:var(--muted);margin:0 0 18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:0 0 16px;box-shadow:var(--shadow)}
+.card > :first-child{margin-top:0}
+.card > :last-child{margin-bottom:0}
+.grid{display:grid;gap:16px}
+@media(min-width:680px){.grid.two{grid-template-columns:1fr 1fr}}
+ol,ul{padding-left:20px;margin:8px 0}
+li{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+th,td{text-align:left;padding:8px 9px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+td.num,th.num{text-align:center}
+tbody tr:last-child td{border-bottom:0}
+.pill{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:2px 10px;font-size:.78rem;font-weight:700}
+label{display:block;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:4px}
+input,select,textarea,button.btn{
+  font:inherit;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:10px;padding:9px 10px;width:100%;
+}
+input[type="number"]{text-align:center}
+textarea{min-height:120px;resize:vertical}
+button.btn{background:var(--accent);color:var(--on-accent);border-color:transparent;font-weight:700;cursor:pointer;width:auto;padding:10px 16px}
+button.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.row > *{flex:1 1 140px}
+.row > .shrink{flex:0 0 auto}
+.match{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--bg)}
+.match h4{margin:0 0 10px;font-size:.95rem;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.match h4 span{font-weight:600;color:var(--muted);font-size:.8rem}
+.score{display:grid;grid-template-columns:1fr 54px 14px 54px 1fr;gap:6px;align-items:center}
+.score .t{font-weight:700;font-size:.92rem}
+.score .t.b{text-align:right}
+.score .x{text-align:center;color:var(--muted)}
+.fair{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:.84rem}
+.fair label{display:inline-flex;align-items:center;gap:5px;margin:0;font-weight:600;color:var(--ink);text-transform:none;letter-spacing:0}
+.fair input{width:auto}
+.fairgroup{flex:1 1 230px;border:1px dashed var(--line);border-radius:10px;padding:8px 10px}
+.fairgroup label{margin-right:14px}
+.fairgroup b{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px}
+.timer{text-align:center}
+.clock{font-variant-numeric:tabular-nums;font-weight:800;font-size:clamp(3rem,16vw,5.5rem);line-height:1;letter-spacing:-.03em;margin:4px 0}
+.phase{font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;font-size:.8rem}
+.timer .row{justify-content:center}
+.timer .row > *{flex:0 0 auto}
+.flash{animation:flash 1s ease-in-out 3}
+@keyframes flash{50%{background:var(--accent-soft)}}
+.light{background:var(--bg);border-radius:12px;padding:12px;border-left:5px solid var(--line);margin-bottom:10px}
+.light.r{border-left-color:#d94f4f}.light.y{border-left-color:#e0b03a}.light.g{border-left-color:#3aa76d}
+.light b{display:block}
+.note{font-size:.86rem;color:var(--muted)}
+.teams{display:grid;gap:10px}
+@media(min-width:560px){.teams{grid-template-columns:1fr 1fr}}
+footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--muted);font-size:.85rem}
+a{color:var(--accent)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px}
+.toolbar .sp{flex:1 1 auto}
+.toolbar select{width:auto}
+@media print{
+  nav,header p,.toolbar,footer,.noprint{display:none!important}
+  body{background:#fff;color:#000}
+  section[role="tabpanel"]{display:block!important}
+  .card{box-shadow:none;border-color:#999;break-inside:avoid}
+  header{background:#fff;color:#000;border-bottom:2px solid #000}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>Torneo de colpbol en clase</h1>
+    <p>4º, 5º y 6º de Primaria · 5 sesiones · gana cooperar, no solo marcar</p>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap" role="tablist" aria-label="Secciones">
+    <button role="tab" aria-selected="true" data-tab="inicio">Inicio</button>
+    <button role="tab" aria-selected="false" data-tab="reglas">Reglas</button>
+    <button role="tab" aria-selected="false" data-tab="equipos">Equipos</button>
+    <button role="tab" aria-selected="false" data-tab="calendario">Calendario y actas</button>
+    <button role="tab" aria-selected="false" data-tab="clasificacion">Clasificación</button>
+    <button role="tab" aria-selected="false" data-tab="cronometro">Cronómetro</button>
+    <button role="tab" aria-selected="false" data-tab="roles">Roles y conflictos</button>
+    <button role="tab" aria-selected="false" data-tab="evaluacion">Evaluación</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <div class="toolbar noprint">
+    <div class="shrink">
+      <label for="clase">Clase</label>
+      <select id="clase">
+        <option value="4">4º</option>
+        <option value="5" selected>5º</option>
+        <option value="6">6º</option>
+      </select>
+    </div>
+    <div class="shrink">
+      <label for="nequipos">Equipos</label>
+      <select id="nequipos">
+        <option value="4">4 equipos</option>
+        <option value="5">5 equipos</option>
+      </select>
+    </div>
+    <span class="sp"></span>
+    <button class="btn ghost" id="exportar" type="button">Guardar copia</button>
+    <button class="btn ghost" id="importar" type="button">Cargar copia</button>
+    <button class="btn ghost" id="tema" type="button" title="Cambiar tema">Tema</button>
+    <input type="file" id="ficheroImport" accept="application/json" hidden>
+  </div>
+
+  <!-- INICIO -->
+  <section role="tabpanel" id="inicio" class="on">
+    <h2>Cómo funciona el torneo</h2>
+    <p class="lead">Cada clase juega su propia liga de colpbol con 4 o 5 equipos mixtos de 5-6 alumnos, en 5 sesiones: una de preparación, tres jornadas de liga y una fase final. Gana el equipo que suma más puntos entre resultados y juego limpio.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Las 5 sesiones</h3>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Sesión</th><th>Qué se hace</th><th>Con 4 equipos</th><th>Con 5 equipos</th></tr></thead>
+          <tbody>
+            <tr><td><b>1 · Preparación</b></td><td>Equipos, nombre y grito, contrato, roles, reglas y partidos de prueba</td><td>—</td><td>—</td></tr>
+            <tr><td><b>2 · Jornada 1</b></td><td>Calentamiento, 2 rondas y clasificación</td><td>Rondas 1 y 2</td><td>Rondas 1 y 2</td></tr>
+            <tr><td><b>3 · Jornada 2</b></td><td>Igual</td><td>Rondas 3 y 4</td><td>Rondas 3 y 4</td></tr>
+            <tr><td><b>4 · Jornada 3</b></td><td>Igual</td><td>Rondas 5 y 6</td><td>Ronda 5 y tiempo de táctica por equipos</td></tr>
+            <tr><td><b>5 · Fase final</b></td><td>Partidos por puestos, premios y evaluación</td><td>Final 1º-2º y 3º-4º</td><td>3º-4º, final 1º-2º y partido 5º-perdedor del 3º-4º</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note"><b>Una jornada tipo (55′):</b> calentamiento dirigido por los capitanes (8′), ronda A (15′), ronda B (15′) y asamblea con clasificación y juego limpio (10′). Cada ronda son 2 partidos a la vez, uno en cada media pista.</p>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3 style="margin-top:0">Campo y material</h3>
+        <p>Se juega 5 contra 5 (4 de campo y portero) en media pista, en sentido transversal: así hay 2 partidos a la vez.</p>
+        <ul>
+          <li>2 balones blandos y que boten, de unos 65-72 cm de circunferencia (de voleibol blando o de gomaespuma).</li>
+          <li>4 porterías pequeñas, o conos a 3 metros de distancia.</li>
+          <li>Tiza o cinta para marcar un área semicircular de unos 4 metros delante de cada portería.</li>
+          <li>Petos de 2 colores por campo, silbato y cronómetro.</li>
+        </ul>
+        <p class="note">Con 6 jugadores, uno queda en el banquillo y entra en cada cambio, que se hace cada 3 minutos con el silbato. El portero cambia en el descanso.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Recursos imprimibles</h3>
+        <p class="note">En blanco y negro y listos para fotocopiar.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Recurso</th><th>Cuántos</th></tr></thead>
+            <tbody>
+              <tr><td>Reglas del colpbol (póster)</td><td>1 por grupo</td></tr>
+              <tr><td>Semáforo de los conflictos (póster)</td><td>1 por grupo</td></tr>
+              <tr><td>Contrato de equipo</td><td>1 por equipo</td></tr>
+              <tr><td>Tarjetas de roles</td><td>1 juego por equipo</td></tr>
+              <tr><td>Calendario de 4 o 5 equipos</td><td>1 por clase</td></tr>
+              <tr><td>Acta de partido</td><td>2 por ronda</td></tr>
+              <tr><td>Clasificación</td><td>1 por clase</td></tr>
+              <tr><td>Autoevaluación de equipo</td><td>1 por equipo</td></tr>
+              <tr><td>Tarjetas del árbitro (3 verdes y 3 azules)</td><td>1 juego por campo</td></tr>
+              <tr><td>Diplomas</td><td>Según equipos</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGLAS -->
+  <section role="tabpanel" id="reglas">
+    <h2>Reglas</h2>
+    <p class="lead">El colpbol lo creó el profesor de Educación Física Juanjo Bendicho en 1997 para que juegue todo el equipo y nadie pueda ir solo.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Reglas del colpbol escolar</h3>
+      <ol>
+        <li>El balón solo se <b>golpea</b> con la mano abierta, el brazo o la parte de arriba del cuerpo. No se coge, no se retiene y no se lanza.</li>
+        <li><b>Nadie golpea dos veces seguidas.</b> Hace falta que antes lo toque otro jugador.</li>
+        <li>No se juega con piernas ni pies, ni con el puño cerrado. Solo el portero puede usar los pies, dentro de su área y para defender.</li>
+        <li>Solo el portero puede estar dentro del área.</li>
+        <li>No se empuja ni se agarra al rival.</li>
+        <li>Las faltas y los fueras por la banda se sacan desde la banda, con un golpe y con los rivales a 3 metros. No hay penaltis.</li>
+        <li>Un toque con el pie sin querer no es falta: el árbitro dice «rebote, seguimos».</li>
+        <li>Cada partido dura 2 tiempos de 6 minutos, con 1 minuto de descanso para cambiar portero y hablar de táctica.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Reglas del torneo para cooperar</h3>
+      <ul>
+        <li><b>Gol de equipo:</b> un gol solo vale si antes han tocado el balón al menos 3 jugadores del equipo que ataca (2 en 4º).</li>
+        <li><b>Todos en el campo:</b> cada jugador juega como mínimo un tiempo completo y hace de portero al menos una vez por jornada.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Puntuación</h3>
+      <p>Cada partido reparte hasta <b>6 puntos</b> por equipo: 3 por el resultado y 3 por el juego limpio. Así, perder jugando limpio (1 + 3 = 4) da más puntos que ganar discutiendo (3 + 0 = 3).</p>
+      <p><b>Puntos por resultado:</b> victoria 3, empate 2, derrota 1. La derrota suma porque jugar con todo el equipo también cuenta.</p>
+      <p><b>Puntos de juego limpio:</b> al acabar, el árbitro da a cada equipo un punto por cada criterio que cumpla. En el campo con autoarbitraje los puntos los das tú.</p>
+      <ol>
+        <li><b>Respeto:</b> sin insultos, burlas ni protestas al rival ni al árbitro.</li>
+        <li><b>Cooperación:</b> han jugado todos y se han animado entre ellos.</li>
+        <li><b>Saludo:</b> se chocan las manos al empezar y al acabar, y aceptan el resultado.</li>
+      </ol>
+      <p><b>Punto extra (+1):</b> para el equipo de servicio que arbitra y anota bien, o para los dos equipos si el autoarbitraje sale sin discusiones.</p>
+      <p><b>Desempates</b>, en este orden: más puntos de juego limpio, resultado entre los dos equipos, diferencia de goles y más goles marcados.</p>
+    </div>
+  </section>
+
+  <!-- EQUIPOS -->
+  <section role="tabpanel" id="equipos">
+    <h2>Equipos</h2>
+    <p class="lead">Los haces tú: mixtos, equilibrados en nivel y separando a quienes suelen chocar. Con 24-26 alumnos salen 4 equipos de 6 o 5 equipos de 5. Se mantienen igual todo el torneo.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Nombres de los equipos</h3>
+      <div class="teams" id="nombresEquipos"></div>
+      <p class="note" style="margin-top:12px">Los nombres se guardan solos en este navegador y aparecen en el calendario, las actas y la clasificación.</p>
+    </div>
+
+    <div class="card noprint">
+      <h3 style="margin-top:0">Reparto rápido de la clase</h3>
+      <p class="note">Escribe los nombres del alumnado, uno por línea. El reparto es al azar: revísalo después para equilibrar niveles y separar conflictos.</p>
+      <label for="listaAlumnos">Alumnado de la clase</label>
+      <textarea id="listaAlumnos" placeholder="Ana&#10;Bruno&#10;Carla&#10;…"></textarea>
+      <div class="row" style="margin-top:10px">
+        <div class="shrink"><button class="btn" id="repartir" type="button">Repartir al azar</button></div>
+        <div class="shrink"><button class="btn ghost" id="limpiarReparto" type="button">Vaciar reparto</button></div>
+      </div>
+      <div id="resultadoReparto" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <!-- CALENDARIO -->
+  <section role="tabpanel" id="calendario">
+    <h2>Calendario y actas</h2>
+    <p class="lead" id="calendarioIntro"></p>
+    <div id="calendarioLista"></div>
+    <div class="card noprint">
+      <button class="btn ghost" id="borrarResultados" type="button">Borrar todos los resultados de esta clase</button>
+    </div>
+  </section>
+
+  <!-- CLASIFICACIÓN -->
+  <section role="tabpanel" id="clasificacion">
+    <h2>Clasificación</h2>
+    <p class="lead">Se calcula sola con las actas del calendario. Rellénala en la asamblea de cada jornada.</p>
+    <div class="card">
+      <div class="scroll">
+        <table id="tablaClasificacion">
+          <thead>
+            <tr>
+              <th>#</th><th>Equipo</th><th class="num">PJ</th><th class="num">G</th><th class="num">E</th><th class="num">P</th>
+              <th class="num">GF</th><th class="num">GC</th><th class="num">Result.</th><th class="num">J. limpio</th><th class="num">Total</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:12px">PJ: partidos jugados · G, E, P: ganados, empatados y perdidos · GF, GC: goles a favor y en contra. Desempate: juego limpio, resultado entre los dos equipos, diferencia de goles y goles marcados.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Premios de la sesión 5</h3>
+      <ul>
+        <li><b>Campeón de la liga:</b> el equipo con más puntos totales.</li>
+        <li><b>Premio al juego limpio:</b> el equipo con más puntos de juego limpio y tarjetas verdes.</li>
+        <li><b>Premio al mejor equipo:</b> lo votan los demás equipos, al que mejor ha cooperado.</li>
+        <li><b>Diploma para todos los participantes</b>, con el nombre del equipo.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CRONÓMETRO -->
+  <section role="tabpanel" id="cronometro">
+    <h2>Cronómetro del partido</h2>
+    <p class="lead">Dos tiempos de 6 minutos con 1 minuto de descanso. Aviso de cambio cada 3 minutos para que entren los suplentes.</p>
+    <div class="card timer">
+      <div class="phase" id="fase">1er tiempo</div>
+      <div class="clock" id="reloj">6:00</div>
+      <div class="row">
+        <button class="btn" id="btnStart" type="button">Empezar</button>
+        <button class="btn ghost" id="btnReset" type="button">Reiniciar</button>
+        <button class="btn ghost" id="btnSalto" type="button">Siguiente fase</button>
+      </div>
+      <p class="note" id="avisoCambio" style="margin-top:14px">Aviso de cambio a mitad de cada tiempo.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Tiempo muerto</h3>
+      <p>Cada equipo tiene un <b>tiempo muerto</b> de 30 segundos por partido, para calmarse o cambiar de táctica.</p>
+      <p><b>Minuto de equipo.</b> En el descanso de cada partido, el equipo se junta en corro: el estratega dice una idea y el animador dice algo que esté saliendo bien.</p>
+    </div>
+  </section>
+
+  <!-- ROLES -->
+  <section role="tabpanel" id="roles">
+    <h2>Roles y conflictos</h2>
+    <p class="lead">Cada alumno tiene un rol en su equipo y los roles cambian en cada jornada, para que todos pasen por todos.</p>
+
+    <div class="card">
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Rol</th><th>Qué hace</th></tr></thead>
+          <tbody>
+            <tr><td><b>Capitán/a</b></td><td>Habla con el árbitro, dirige el calentamiento y el grito, y organiza los cambios.</td></tr>
+            <tr><td><b>Animador/a</b></td><td>Se asegura de que todos tocan el balón y anima, sobre todo después de un fallo.</td></tr>
+            <tr><td><b>Mediador/a</b></td><td>Pone en marcha el semáforo cuando hay un conflicto en su equipo.</td></tr>
+            <tr><td><b>Anotador/a</b></td><td>Rellena el acta con el árbitro: goles, tarjetas verdes y puntos de juego limpio.</td></tr>
+            <tr><td><b>Material</b></td><td>Prepara petos y balón y los recoge al acabar.</td></tr>
+            <tr><td><b>Estratega</b> (equipos de 6)</td><td>Propone en el descanso una idea de táctica para el segundo tiempo.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:12px"><b>Contrato de equipo (sesión 1).</b> Cada equipo elige nombre y grito y escribe 3 compromisos propios, por ejemplo «animamos después de un fallo», «pasamos a todos» o «aceptamos lo que diga el árbitro». Lo firman todos y se repasa en cada asamblea.</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Normas de todos los partidos</h3>
+      <ul>
+        <li>Solo el capitán o la capitana habla con el árbitro, con calma y levantando la mano.</li>
+        <li>Si alguien no está de acuerdo con una decisión, lo cuenta en la asamblea final, no en el campo.</li>
+        <li>Lo que decide el árbitro vale durante el partido.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Semáforo de los conflictos</h3>
+      <p class="note">Cuando dos alumnos discuten.</p>
+      <div class="light r"><b>Rojo · Paro.</b> Los dos salen del campo al rincón de la calma (un banco o un aro fuera de la pista) y respiran despacio 5 veces.</div>
+      <div class="light y"><b>Amarillo · Hablo y escucho.</b> Cada uno dice «yo me he sentido… cuando…» sin interrumpir al otro. Ayuda el mediador del equipo o del equipo de servicio.</div>
+      <div class="light g"><b>Verde · Acordamos.</b> Proponen una solución, se chocan la mano y vuelven a jugar.</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Tarjetas</h3>
+      <ul>
+        <li><b>Verde, de juego limpio:</b> el árbitro la da por una buena acción, como ayudar a levantarse a un rival o reconocer una falta propia. Se apunta en el acta y cuenta para el premio al juego limpio.</li>
+        <li><b>Azul, de reflexión:</b> por protestar, insultar o empujar. El jugador sale 1 minuto al rincón de la calma, hace el semáforo y vuelve. Su equipo pierde el punto de «respeto» de ese partido. No hay expulsiones largas.</li>
+        <li>Si un alumno repite, hablas con él al final de la sesión, a solas.</li>
+      </ul>
+      <p class="note"><b>Asamblea de cada jornada (10′):</b> ¿qué ha ido bien?, ¿qué conflicto ha habido y cómo lo hemos resuelto? Se aplaude más una buena solución que un gol.</p>
+    </div>
+  </section>
+
+  <!-- EVALUACIÓN -->
+  <section role="tabpanel" id="evaluacion">
+    <h2>Evaluación</h2>
+    <p class="lead">Se evalúa sobre todo cómo juega cada alumno con su equipo, no cuántos goles mete.</p>
+
+    <div class="card">
+      <h3 style="margin-top:0">Qué observar</h3>
+      <p class="note">Lista de control de cada alumno: sí, a veces o no.</p>
+      <ul>
+        <li>Pasa el balón a todos los compañeros, no solo a sus amigos.</li>
+        <li>Respeta las reglas y las decisiones del árbitro.</li>
+        <li>Cumple su rol en el equipo.</li>
+        <li>Usa el semáforo y resuelve los conflictos hablando.</li>
+        <li>Anima a los compañeros y acepta la derrota.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Autoevaluación de equipo</h3>
+      <p class="note">2 minutos al final de cada jornada. El equipo se puntúa del 1 al 4 y el mediador lo apunta.</p>
+      <ol>
+        <li>¿Hemos jugado todos?</li>
+        <li>¿Nos hemos animado?</li>
+        <li>¿Hemos respetado al árbitro y al rival?</li>
+        <li>¿Hemos cumplido nuestro contrato?</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Fuentes</h3>
+      <ul>
+        <li><a href="https://efdeportes.com/efd183/colpbol-un-nuevo-deporte-de-equipo.htm" target="_blank" rel="noopener">Colpbol, un nuevo deporte de equipo (EFDeportes, 2013)</a>: origen y reglas básicas del colpbol.</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p>Los datos (nombres de equipos, resultados y juego limpio) se guardan solo en este navegador. Usa «Guardar copia» para llevarte un archivo y «Cargar copia» para recuperarlo en otro dispositivo.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var LETRAS = ["A","B","C","D","E"];
+  var FIXTURES = {
+    4: {
+      rondas: [
+        [[0,1],[2,3]],
+        [[0,2],[1,3]],
+        [[0,3],[1,2]],
+        [[1,0],[3,2]],
+        [[2,0],[3,1]],
+        [[3,0],[2,1]]
+      ],
+      servicio: null
+    },
+    5: {
+      rondas: [
+        [[1,4],[2,3]],
+        [[0,4],[1,2]],
+        [[0,3],[2,4]],
+        [[0,2],[1,3]],
+        [[0,1],[3,4]]
+      ],
+      servicio: [0,3,1,4,2]
+    }
+  };
+
+  var STORE = "colpbol-torneo-v1";
+  var estado = cargar();
+
+  function claseVacia(){
+    return { nombres:["Equipo A","Equipo B","Equipo C","Equipo D","Equipo E"], alumnos:"", reparto:null, actas:{} };
+  }
+  function cargar(){
+    var base = { clase:"5", nequipos:{"4":4,"5":4,"6":5}, clases:{} };
+    try{
+      var raw = localStorage.getItem(STORE);
+      if(raw){
+        var d = JSON.parse(raw);
+        if(d && typeof d === "object"){
+          base.clase = d.clase || base.clase;
+          base.nequipos = Object.assign(base.nequipos, d.nequipos || {});
+          base.clases = d.clases || {};
+        }
+      }
+    }catch(e){}
+    ["4","5","6"].forEach(function(c){
+      base.clases[c] = Object.assign(claseVacia(), base.clases[c] || {});
+    });
+    return base;
+  }
+  function guardar(){
+    try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){}
+  }
+  function clase(){ return estado.clases[estado.clase]; }
+  function nEq(){ return estado.nequipos[estado.clase] || 4; }
+  function nombre(i){
+    var n = clase().nombres[i];
+    return (n && n.trim()) ? n.trim() : ("Equipo " + LETRAS[i]);
+  }
+  function claveActa(r,p){ return nEq() + "-" + r + "-" + p; }
+  function acta(r,p){
+    var k = claveActa(r,p), a = clase().actas[k];
+    if(!a){
+      a = { gl:null, gv:null, fl:[false,false,false], fv:[false,false,false], el:false, ev:false, vl:0, vv:0 };
+      clase().actas[k] = a;
+    }
+    return a;
+  }
+
+  /* ---------- pestañas ---------- */
+  var botones = Array.prototype.slice.call(document.querySelectorAll('nav button'));
+  var paneles = Array.prototype.slice.call(document.querySelectorAll('section[role="tabpanel"]'));
+  botones.forEach(function(b){
+    b.addEventListener("click", function(){
+      botones.forEach(function(x){ x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      paneles.forEach(function(p){ p.classList.toggle("on", p.id === b.dataset.tab); });
+      window.scrollTo({top:0, behavior:"instant"});
+      if(location.hash !== "#" + b.dataset.tab) history.replaceState(null, "", "#" + b.dataset.tab);
+    });
+  });
+  function abrirPestana(id){
+    var b = botones.filter(function(x){ return x.dataset.tab === id; })[0];
+    if(b) b.click();
+  }
+  if(location.hash) abrirPestana(location.hash.slice(1));
+
+  /* ---------- selectores ---------- */
+  var selClase = document.getElementById("clase");
+  var selN = document.getElementById("nequipos");
+  selClase.value = estado.clase;
+  selN.value = String(nEq());
+  selClase.addEventListener("change", function(){
+    estado.clase = selClase.value;
+    selN.value = String(nEq());
+    guardar(); pintarTodo();
+  });
+  selN.addEventListener("change", function(){
+    estado.nequipos[estado.clase] = parseInt(selN.value, 10);
+    guardar(); pintarTodo();
+  });
+
+  /* ---------- tema ---------- */
+  document.getElementById("tema").addEventListener("click", function(){
+    var actual = document.documentElement.getAttribute("data-theme");
+    var oscuro = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var siguiente = actual ? (actual === "dark" ? "light" : "dark") : (oscuro ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", siguiente);
+    try{ localStorage.setItem(STORE + "-tema", siguiente); }catch(e){}
+  });
+  try{
+    var t = localStorage.getItem(STORE + "-tema");
+    if(t) document.documentElement.setAttribute("data-theme", t);
+  }catch(e){}
+
+  /* ---------- nombres de equipos ---------- */
+  function pintarNombres(){
+    var cont = document.getElementById("nombresEquipos");
+    cont.innerHTML = "";
+    for(var i = 0; i < nEq(); i++){
+      (function(i){
+        var d = document.createElement("div");
+        var lab = document.createElement("label");
+        lab.textContent = "Equipo " + LETRAS[i];
+        lab.htmlFor = "eq" + i;
+        var inp = document.createElement("input");
+        inp.id = "eq" + i;
+        inp.value = clase().nombres[i] || "";
+        inp.placeholder = "Equipo " + LETRAS[i];
+        inp.addEventListener("input", function(){
+          clase().nombres[i] = inp.value;
+          guardar(); pintarCalendario(); pintarClasificacion();
+        });
+        d.appendChild(lab); d.appendChild(inp);
+        cont.appendChild(d);
+      })(i);
+    }
+  }
+
+  /* ---------- reparto de alumnado ---------- */
+  var txtAlumnos = document.getElementById("listaAlumnos");
+  txtAlumnos.addEventListener("input", function(){ clase().alumnos = txtAlumnos.value; guardar(); });
+  document.getElementById("repartir").addEventListener("click", function(){
+    var lista = txtAlumnos.value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+    if(!lista.length){ alert("Escribe primero los nombres del alumnado, uno por línea."); return; }
+    for(var i = lista.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = lista[i]; lista[i] = lista[j]; lista[j] = tmp;
+    }
+    var grupos = [];
+    for(var g = 0; g < nEq(); g++) grupos.push([]);
+    lista.forEach(function(al, idx){ grupos[idx % nEq()].push(al); });
+    clase().reparto = grupos;
+    guardar(); pintarReparto();
+  });
+  document.getElementById("limpiarReparto").addEventListener("click", function(){
+    clase().reparto = null; guardar(); pintarReparto();
+  });
+  function pintarReparto(){
+    var cont = document.getElementById("resultadoReparto");
+    cont.innerHTML = "";
+    var grupos = clase().reparto;
+    if(!grupos || !grupos.length) return;
+    var wrap = document.createElement("div");
+    wrap.className = "teams";
+    grupos.slice(0, nEq()).forEach(function(g, i){
+      var c = document.createElement("div");
+      c.className = "match";
+      var h = document.createElement("h4");
+      h.innerHTML = "<span class='pill'>" + LETRAS[i] + "</span> " + escapar(nombre(i));
+      var ul = document.createElement("ul");
+      g.forEach(function(al){
+        var li = document.createElement("li");
+        li.textContent = al;
+        ul.appendChild(li);
+      });
+      c.appendChild(h); c.appendChild(ul);
+      wrap.appendChild(c);
+    });
+    cont.appendChild(wrap);
+  }
+
+  /* ---------- calendario y actas ---------- */
+  function pintarCalendario(){
+    var fx = FIXTURES[nEq()];
+    var intro = document.getElementById("calendarioIntro");
+    if(nEq() === 4){
+      intro.innerHTML = "Todos contra todos, ida y vuelta: 6 rondas de 2 partidos. Con 4 equipos no hay equipo libre: tú arbitras el campo 1 y en el campo 2 se juega con <b>autoarbitraje</b> (quien hace la falta levanta la mano). Los suplentes hacen de anotadores.";
+    } else {
+      intro.innerHTML = "Todos contra todos: 5 rondas de 2 partidos. El <b>equipo de servicio</b> descansa de jugar pero no de participar: pone 2 árbitros (uno por campo), 2 anotadores y 1 cronometrador. Cada equipo hace de servicio una vez.";
+    }
+
+    var cont = document.getElementById("calendarioLista");
+    cont.innerHTML = "";
+    fx.rondas.forEach(function(ronda, r){
+      var card = document.createElement("div");
+      card.className = "card";
+      var h = document.createElement("h3");
+      h.style.marginTop = "0";
+      h.textContent = "Ronda " + (r + 1);
+      if(fx.servicio){
+        var sp = document.createElement("span");
+        sp.className = "pill";
+        sp.style.marginLeft = "8px";
+        sp.textContent = "Servicio: " + nombre(fx.servicio[r]);
+        h.appendChild(sp);
+      }
+      card.appendChild(h);
+      ronda.forEach(function(par, p){
+        card.appendChild(pintarPartido(r, p, par[0], par[1]));
+      });
+      cont.appendChild(card);
+    });
+  }
+
+  function pintarPartido(r, p, l, v){
+    var a = acta(r, p);
+    var box = document.createElement("div");
+    box.className = "match";
+
+    var h = document.createElement("h4");
+    h.innerHTML = "<span>Campo " + (p + 1) + (p === 1 && nEq() === 4 ? " · autoarbitraje" : "") + "</span>";
+    box.appendChild(h);
+
+    var sc = document.createElement("div");
+    sc.className = "score";
+
+    var tl = document.createElement("div"); tl.className = "t b"; tl.textContent = nombre(l);
+    var inL = numInput(a.gl, function(val){ a.gl = val; guardar(); pintarClasificacion(); });
+    var x = document.createElement("div"); x.className = "x"; x.textContent = "–";
+    var inV = numInput(a.gv, function(val){ a.gv = val; guardar(); pintarClasificacion(); });
+    var tv = document.createElement("div"); tv.className = "t"; tv.textContent = nombre(v);
+
+    sc.appendChild(tl); sc.appendChild(inL); sc.appendChild(x); sc.appendChild(inV); sc.appendChild(tv);
+    box.appendChild(sc);
+
+    var fair = document.createElement("div");
+    fair.className = "fair";
+    fair.appendChild(grupoJuegoLimpio(nombre(l), a, "fl", "el", "vl"));
+    fair.appendChild(grupoJuegoLimpio(nombre(v), a, "fv", "ev", "vv"));
+    box.appendChild(fair);
+
+    return box;
+  }
+
+  function numInput(valor, onChange){
+    var i = document.createElement("input");
+    i.type = "number"; i.min = "0"; i.max = "99"; i.inputMode = "numeric";
+    i.placeholder = "–";
+    i.value = (valor === null || valor === undefined) ? "" : valor;
+    i.addEventListener("input", function(){
+      var v = i.value === "" ? null : Math.max(0, parseInt(i.value, 10) || 0);
+      onChange(v);
+    });
+    return i;
+  }
+
+  function grupoJuegoLimpio(titulo, a, campoF, campoExtra, campoVerde){
+    var CRIT = ["Respeto", "Cooperación", "Saludo"];
+    var g = document.createElement("div");
+    g.className = "fairgroup";
+    var b = document.createElement("b");
+    b.textContent = "Juego limpio · " + titulo;
+    g.appendChild(b);
+    CRIT.forEach(function(c, i){
+      var lab = document.createElement("label");
+      var chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.checked = !!a[campoF][i];
+      chk.addEventListener("change", function(){
+        a[campoF][i] = chk.checked; guardar(); pintarClasificacion();
+      });
+      lab.appendChild(chk);
+      lab.appendChild(document.createTextNode(c));
+      g.appendChild(lab);
+    });
+    var labX = document.createElement("label");
+    var chkX = document.createElement("input");
+    chkX.type = "checkbox";
+    chkX.checked = !!a[campoExtra];
+    chkX.addEventListener("change", function(){ a[campoExtra] = chkX.checked; guardar(); pintarClasificacion(); });
+    labX.appendChild(chkX);
+    labX.appendChild(document.createTextNode("Extra +1"));
+    g.appendChild(labX);
+
+    var labV = document.createElement("label");
+    labV.appendChild(document.createTextNode("Verdes"));
+    var inV = document.createElement("input");
+    inV.type = "number"; inV.min = "0"; inV.max = "9"; inV.inputMode = "numeric";
+    inV.style.width = "56px";
+    inV.value = a[campoVerde] || 0;
+    inV.addEventListener("input", function(){
+      a[campoVerde] = Math.max(0, parseInt(inV.value, 10) || 0); guardar(); pintarClasificacion();
+    });
+    labV.appendChild(inV);
+    g.appendChild(labV);
+    return g;
+  }
+
+  document.getElementById("borrarResultados").addEventListener("click", function(){
+    if(!confirm("¿Borrar todos los resultados y el juego limpio de " + estado.clase + "º?")) return;
+    clase().actas = {};
+    guardar(); pintarCalendario(); pintarClasificacion();
+  });
+
+  /* ---------- clasificación ---------- */
+  function calcular(){
+    var n = nEq(), fx = FIXTURES[n];
+    var fila = [];
+    for(var i = 0; i < n; i++){
+      fila.push({ i:i, nombre:nombre(i), pj:0, g:0, e:0, p:0, gf:0, gc:0, pr:0, pl:0, verdes:0, h2h:{} });
+    }
+    fx.rondas.forEach(function(ronda, r){
+      ronda.forEach(function(par, p){
+        var k = claveActa(r, p), a = clase().actas[k];
+        if(!a) return;
+        var l = par[0], v = par[1];
+        var limpL = a.fl.filter(Boolean).length + (a.el ? 1 : 0);
+        var limpV = a.fv.filter(Boolean).length + (a.ev ? 1 : 0);
+        fila[l].pl += limpL; fila[v].pl += limpV;
+        fila[l].verdes += (a.vl || 0); fila[v].verdes += (a.vv || 0);
+        if(a.gl === null || a.gv === null || a.gl === undefined || a.gv === undefined) return;
+        fila[l].pj++; fila[v].pj++;
+        fila[l].gf += a.gl; fila[l].gc += a.gv;
+        fila[v].gf += a.gv; fila[v].gc += a.gl;
+        var dif = a.gl - a.gv;
+        fila[l].h2h[v] = (fila[l].h2h[v] || 0) + dif;
+        fila[v].h2h[l] = (fila[v].h2h[l] || 0) - dif;
+        if(dif > 0){ fila[l].g++; fila[v].p++; fila[l].pr += 3; fila[v].pr += 1; }
+        else if(dif < 0){ fila[v].g++; fila[l].p++; fila[v].pr += 3; fila[l].pr += 1; }
+        else { fila[l].e++; fila[v].e++; fila[l].pr += 2; fila[v].pr += 2; }
+      });
+    });
+    fila.forEach(function(f){ f.total = f.pr + f.pl; });
+    fila.sort(function(a, b){
+      if(b.total !== a.total) return b.total - a.total;
+      if(b.pl !== a.pl) return b.pl - a.pl;
+      var d = (a.h2h[b.i] || 0);
+      if(d !== 0) return -d;
+      var da = a.gf - a.gc, db = b.gf - b.gc;
+      if(db !== da) return db - da;
+      if(b.gf !== a.gf) return b.gf - a.gf;
+      return a.nombre.localeCompare(b.nombre, "es");
+    });
+    return fila;
+  }
+
+  function pintarClasificacion(){
+    var tb = document.querySelector("#tablaClasificacion tbody");
+    tb.innerHTML = "";
+    calcular().forEach(function(f, idx){
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td class='num'>" + (idx + 1) + "</td>" +
+        "<td><b>" + escapar(f.nombre) + "</b>" + (f.verdes ? " <span class='note'>· " + f.verdes + " verdes</span>" : "") + "</td>" +
+        "<td class='num'>" + f.pj + "</td>" +
+        "<td class='num' style='color:var(--win)'>" + f.g + "</td>" +
+        "<td class='num' style='color:var(--draw)'>" + f.e + "</td>" +
+        "<td class='num' style='color:var(--loss)'>" + f.p + "</td>" +
+        "<td class='num'>" + f.gf + "</td>" +
+        "<td class='num'>" + f.gc + "</td>" +
+        "<td class='num'>" + f.pr + "</td>" +
+        "<td class='num'>" + f.pl + "</td>" +
+        "<td class='num'><b>" + f.total + "</b></td>";
+      tb.appendChild(tr);
+    });
+  }
+
+  /* ---------- cronómetro ---------- */
+  var FASES = [
+    { nombre:"1er tiempo", seg:360, cambio:180 },
+    { nombre:"Descanso",   seg:60,  cambio:0 },
+    { nombre:"2º tiempo",  seg:360, cambio:180 }
+  ];
+  var fase = 0, restante = FASES[0].seg, corriendo = false, intervalo = null, avisado = false;
+  var elReloj = document.getElementById("reloj");
+  var elFase = document.getElementById("fase");
+  var elAviso = document.getElementById("avisoCambio");
+  var btnStart = document.getElementById("btnStart");
+
+  function mmss(s){
+    var m = Math.floor(s / 60), r = s % 60;
+    return m + ":" + (r < 10 ? "0" : "") + r;
+  }
+  function pintarReloj(){
+    elReloj.textContent = mmss(Math.max(0, restante));
+    elFase.textContent = FASES[fase].nombre;
+    btnStart.textContent = corriendo ? "Pausa" : "Empezar";
+  }
+  function pitido(freq, dur){
+    try{
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return;
+      var ctx = new AC();
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.frequency.value = freq || 880;
+      osc.connect(gain); gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + (dur || .35));
+      osc.start(); osc.stop(ctx.currentTime + (dur || .35));
+      setTimeout(function(){ try{ ctx.close(); }catch(e){} }, 800);
+    }catch(e){}
+  }
+  function tick(){
+    restante--;
+    if(!avisado && FASES[fase].cambio && restante === FASES[fase].cambio){
+      avisado = true;
+      elAviso.textContent = "¡Cambio! Entran los suplentes.";
+      elAviso.classList.add("flash");
+      pitido(660, .25);
+      setTimeout(function(){ elAviso.classList.remove("flash"); }, 3200);
+    }
+    if(restante <= 0){
+      pitido(440, .6);
+      siguienteFase();
+    }
+    pintarReloj();
+  }
+  function siguienteFase(){
+    if(fase < FASES.length - 1){
+      fase++; restante = FASES[fase].seg; avisado = false;
+      elAviso.textContent = fase === 1 ? "Descanso: cambio de portero y minuto de equipo." : "Aviso de cambio a mitad del tiempo.";
+    } else {
+      pararReloj();
+      restante = 0;
+      elAviso.textContent = "Partido terminado. Puntos de juego limpio y acta.";
+    }
+  }
+  function pararReloj(){
+    corriendo = false;
+    if(intervalo){ clearInterval(intervalo); intervalo = null; }
+  }
+  btnStart.addEventListener("click", function(){
+    if(corriendo){ pararReloj(); }
+    else {
+      if(restante <= 0 && fase === FASES.length - 1){ fase = 0; restante = FASES[0].seg; avisado = false; }
+      corriendo = true;
+      intervalo = setInterval(tick, 1000);
+    }
+    pintarReloj();
+  });
+  document.getElementById("btnReset").addEventListener("click", function(){
+    pararReloj(); fase = 0; restante = FASES[0].seg; avisado = false;
+    elAviso.textContent = "Aviso de cambio a mitad de cada tiempo.";
+    pintarReloj();
+  });
+  document.getElementById("btnSalto").addEventListener("click", function(){
+    avisado = false;
+    if(fase < FASES.length - 1){ fase++; restante = FASES[fase].seg; }
+    else { pararReloj(); fase = 0; restante = FASES[0].seg; }
+    pintarReloj();
+  });
+
+  /* ---------- copia de seguridad ---------- */
+  document.getElementById("exportar").addEventListener("click", function(){
+    var blob = new Blob([JSON.stringify(estado, null, 2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "torneo-colpbol.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  });
+  var fichero = document.getElementById("ficheroImport");
+  document.getElementById("importar").addEventListener("click", function(){ fichero.click(); });
+  fichero.addEventListener("change", function(){
+    var f = fichero.files && fichero.files[0];
+    if(!f) return;
+    var fr = new FileReader();
+    fr.onload = function(){
+      try{
+        var d = JSON.parse(fr.result);
+        if(!d || !d.clases) throw new Error("formato");
+        estado = { clase: d.clase || "5", nequipos: Object.assign({"4":4,"5":4,"6":5}, d.nequipos || {}), clases: d.clases };
+        ["4","5","6"].forEach(function(c){ estado.clases[c] = Object.assign(claseVacia(), estado.clases[c] || {}); });
+        guardar();
+        selClase.value = estado.clase;
+        selN.value = String(nEq());
+        pintarTodo();
+        alert("Copia cargada.");
+      }catch(e){
+        alert("Ese archivo no es una copia válida del torneo.");
+      }
+      fichero.value = "";
+    };
+    fr.readAsText(f);
+  });
+
+  /* ---------- utilidades ---------- */
+  function escapar(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c];
+    });
+  }
+
+  function pintarTodo(){
+    pintarNombres();
+    txtAlumnos.value = clase().alumnos || "";
+    pintarReparto();
+    pintarCalendario();
+    pintarClasificacion();
+    pintarReloj();
+  }
+
+  pintarTodo();
+})();
+</script>
+</body>
+</html>
