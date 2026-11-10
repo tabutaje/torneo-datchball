@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Torneo de colpbol</title>
-<meta name="description" content="Torneo de colpbol en clase para 4º, 5º y 6º de Primaria: reglas, partidos, marcador, clasificación con juego limpio, cronómetro y roles de equipo.">
+<title>Torneo de datchball</title>
+<meta name="description" content="Torneo de datchball en clase para 4º, 5º y 6º de Primaria: reglas, jugadas épicas, partidos, clasificación con juego limpio, cronómetro con acortes y roles de equipo.">
 <meta name="theme-color" content="#6c3bff">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%8E%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -18,7 +18,8 @@
   --stroke:#1d1b3a; --drop:#1d1b3a;
   --primary:#6c3bff; --on-primary:#ffffff;
   --yellow:#ffd23f; --orange:#ff7a1a; --pink:#ff4d8d; --lime:#3ddc84; --sky:#2ec4ff;
-  --win:#16a34a; --draw:#c26a00; --loss:#dc2626;
+  --win:#16a34a; --loss:#dc2626;
+  --court:#ffc77d; --wall:#8d96aa;
   --r:18px;
   --title:"Fredoka",ui-rounded,"Arial Rounded MT Bold",system-ui,sans-serif;
 }
@@ -29,7 +30,8 @@
     --ink:#fff4dc; --muted:#c3bde8;
     --stroke:#6a62c0; --drop:#05040f;
     --primary:#9b7bff; --on-primary:#15122e;
-    --win:#4ade80; --draw:#fbbf24; --loss:#f87171;
+    --win:#4ade80; --loss:#f87171;
+    --court:#7a5530; --wall:#565f78;
   }
 }
 :root[data-theme="dark"]{
@@ -38,7 +40,8 @@
   --ink:#fff4dc; --muted:#c3bde8;
   --stroke:#6a62c0; --drop:#05040f;
   --primary:#9b7bff; --on-primary:#15122e;
-  --win:#4ade80; --draw:#fbbf24; --loss:#f87171;
+  --win:#4ade80; --loss:#f87171;
+  --court:#7a5530; --wall:#565f78;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
@@ -58,8 +61,9 @@ header{
 }
 header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(255,255,255,.09) 0 14px,transparent 14px 28px)}
 header .wrap{position:relative;display:flex;align-items:center;gap:14px;padding-top:20px;padding-bottom:20px}
-.ball{font-size:clamp(2.8rem,11vw,4.4rem);line-height:1;animation:bote 1.5s ease-in-out infinite;filter:drop-shadow(3px 5px 0 rgba(0,0,0,.28))}
-@keyframes bote{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(180deg)}}
+.ball{font-size:clamp(2.8rem,11vw,4.4rem);line-height:1;animation:esquiva 1.6s ease-in-out infinite;filter:drop-shadow(3px 5px 0 rgba(0,0,0,.28))}
+@keyframes esquiva{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(6px,-14px) rotate(120deg)}60%{transform:translate(-4px,-4px) rotate(240deg)}}
+@keyframes bote{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 header h1{
   font-family:var(--title);font-weight:700;text-transform:uppercase;
   font-size:clamp(1.55rem,6.4vw,2.7rem);line-height:1.02;margin:0;
@@ -131,6 +135,8 @@ label.lab{display:block;font:600 .9rem var(--title);color:var(--muted);margin-bo
 .seg button{border:0;background:transparent;font:600 1rem var(--title);color:var(--ink);padding:5px 14px;cursor:pointer}
 .seg button + button{border-left:2.5px solid var(--stroke)}
 .seg button.on{background:var(--primary);color:var(--on-primary)}
+body[data-n="4"] .solo5,body[data-n="5"] .solo4{display:none}
+body[data-clase="4"] .alevin,body:not([data-clase="4"]) .benjamin{display:none}
 
 /* mascotas y equipos */
 .masc{
@@ -156,10 +162,10 @@ label.lab{display:block;font:600 .9rem var(--title);color:var(--muted);margin-bo
 .caso b{font:700 1.05rem var(--title);display:block}
 .caso.bien{background:#c9f7dc}.caso.mal{background:#ffd6d6}
 .ahora{display:grid;gap:12px}
-@media(min-width:600px){.ahora{grid-template-columns:1fr 1fr}}
+@media(min-width:720px){.ahora{grid-template-columns:1fr 1fr 1fr}}
 .ahora-box{background:var(--panel2);border:2.5px dashed var(--stroke);border-radius:16px;padding:12px 14px}
 .ahora-box .et{font:600 .85rem var(--title);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.ahora-box .val{display:flex;align-items:center;gap:10px;font:700 1.25rem var(--title);margin-top:6px}
+.ahora-box .val{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font:700 1.2rem var(--title);margin-top:6px}
 .pasos{display:grid;gap:12px}
 .paso{display:flex;gap:12px;align-items:flex-start}
 .paso .num{
@@ -175,7 +181,6 @@ label.lab{display:block;font:600 .9rem var(--title);color:var(--muted);margin-bo
 .paso p{margin:2px 0 0}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .chip{background:var(--panel2);border:2px solid var(--stroke);border-radius:999px;padding:3px 12px;font:600 .92rem var(--title)}
-body[data-n="4"] .solo5,body[data-n="5"] .solo4{display:none}
 
 details.profe{background:var(--panel);border:3px dashed var(--stroke);border-radius:var(--r);padding:0 18px;margin:0 0 18px}
 details.profe summary{cursor:pointer;font:600 1.15rem var(--title);padding:14px 0;list-style:none}
@@ -189,6 +194,12 @@ th,td{text-align:left;padding:8px 8px;border-bottom:2px solid var(--bg2);vertica
 th{font:600 .8rem var(--title);text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
 td.num,th.num{text-align:center}
 tbody tr:last-child td{border-bottom:0}
+
+/* ---------- campo ---------- */
+.campo svg{display:block;width:100%;height:auto;max-width:620px;margin:0 auto}
+.campo .leyenda{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;margin-top:12px;font:600 .9rem var(--title)}
+.campo .leyenda span{display:inline-flex;align-items:center;gap:6px}
+.campo .leyenda i{display:inline-block;width:22px;height:8px;border-radius:4px;border:2px solid var(--stroke)}
 
 /* ---------- reglas ---------- */
 .reglas{display:grid;gap:18px 14px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));margin:8px 0 22px;padding-top:6px}
@@ -209,6 +220,10 @@ tbody tr:last-child td{border-bottom:0}
 @media(min-width:640px){.super{grid-template-columns:1fr 1fr}}
 .super .regla{background:var(--yellow);color:#1d1b3a}
 .super .regla .e{font-size:2.6rem}
+.epicas .regla{background:linear-gradient(160deg,#2a1f6b,#5b2a9e);color:#fff;border-color:#1d1b3a}
+.epicas .regla b{color:#ffd23f;font-size:1.2rem}
+.epicas .regla .e{font-size:2.5rem}
+.epicas .regla .tag{position:absolute;top:10px;right:10px;font:700 .72rem var(--title);background:#ff4d8d;color:#fff;border:2px solid #fff;border-radius:999px;padding:0 8px;text-transform:uppercase;letter-spacing:.05em}
 
 /* ---------- equipos ---------- */
 .eqs{display:grid;gap:16px}
@@ -240,28 +255,29 @@ tbody tr:last-child td{border-bottom:0}
 .lado{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;min-width:0}
 .lado .masc{width:56px;height:56px;font-size:1.8rem}
 .lado .nom{font:600 1rem/1.15 var(--title);overflow-wrap:anywhere}
-.goles{display:flex;align-items:center;gap:6px}
-.goles button{
+.lado .et{font:700 .72rem var(--title);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:-4px}
+.tanteo{display:flex;align-items:center;gap:6px}
+.tanteo button{
   width:38px;height:38px;border-radius:50%;border:2.5px solid var(--stroke);background:var(--panel);
   color:var(--ink);font:700 1.35rem/1 var(--title);box-shadow:2px 2px 0 var(--drop);cursor:pointer;padding:0;
 }
-.goles button:active{transform:translate(2px,2px);box-shadow:none}
-.goles .mas{background:var(--lime);color:#1d1b3a}
-.goles output{min-width:1.4em;font:700 2.5rem/1 var(--title);text-align:center;font-variant-numeric:tabular-nums}
-.goles output.pop{animation:pop .35s ease-out}
+.tanteo button:active{transform:translate(2px,2px);box-shadow:none}
+.tanteo .mas{background:var(--lime);color:#1d1b3a}
+.tanteo output{min-width:1.4em;font:700 2.5rem/1 var(--title);text-align:center;font-variant-numeric:tabular-nums}
+.tanteo output.pop{animation:pop .35s ease-out}
 @keyframes pop{40%{transform:scale(1.45);color:var(--pink)}}
 .vs{font:700 1.3rem var(--title);color:var(--pink);transform:rotate(-10deg);text-shadow:2px 2px 0 var(--drop)}
 @media(max-width:440px){
   #calendarioLista .card{padding:12px 10px}
   .marcador{gap:2px;padding:14px 4px 10px}
-  .goles{gap:4px}
-  .goles button{width:31px;height:31px;font-size:1.15rem}
-  .goles output{font-size:2rem;min-width:1.1em}
+  .tanteo{gap:4px}
+  .tanteo button{width:31px;height:31px;font-size:1.15rem}
+  .tanteo output{font-size:2rem;min-width:1.1em}
   .lado .masc{width:50px;height:50px;font-size:1.6rem}
   .vs{font-size:1rem}
 }
 .estado{text-align:center;font:600 1rem var(--title);padding:0 10px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;justify-content:center;align-items:center}
-.estado .pts{font:700 .85rem "Nunito",sans-serif;color:var(--muted)}
+.estado .pts{font:700 .85rem "Nunito",sans-serif;color:var(--muted);flex:1 0 100%}
 .limpio{display:grid;gap:10px;padding:12px;border-top:2.5px dashed var(--stroke)}
 @media(min-width:640px){.limpio{grid-template-columns:1fr 1fr}}
 .limpio-eq{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -271,9 +287,10 @@ tbody tr:last-child td{border-bottom:0}
   font:700 .85rem "Nunito",sans-serif;padding:4px 10px;cursor:pointer;opacity:.55;transition:transform .1s;
 }
 .tog[aria-pressed="true"]{background:var(--yellow);color:#1d1b3a;opacity:1;box-shadow:2px 2px 0 var(--drop);transform:rotate(-2deg)}
-.verdes{display:inline-flex;align-items:center;gap:5px;font:700 .85rem "Nunito",sans-serif;border:2px solid var(--stroke);border-radius:999px;padding:2px 4px 2px 10px;background:var(--panel)}
-.verdes button{width:24px;height:24px;border-radius:50%;border:2px solid var(--stroke);background:var(--lime);color:#1d1b3a;font:700 .9rem/1 var(--title);cursor:pointer;padding:0}
-.verdes button.menos{background:var(--panel2);color:var(--ink)}
+.contador{display:inline-flex;align-items:center;gap:5px;font:700 .85rem "Nunito",sans-serif;border:2px solid var(--stroke);border-radius:999px;padding:2px 4px 2px 10px;background:var(--panel)}
+.contador button{width:24px;height:24px;border-radius:50%;border:2px solid var(--stroke);background:var(--lime);color:#1d1b3a;font:700 .9rem/1 var(--title);cursor:pointer;padding:0}
+.contador button.menos{background:var(--panel2);color:var(--ink)}
+.contador.aire button:not(.menos){background:var(--sky)}
 
 /* ---------- clasificación ---------- */
 .podio{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:8px;margin:6px 0 0}
@@ -308,14 +325,18 @@ td.tot{font:700 1.2rem var(--title);text-align:center}
   box-shadow:6px 6px 0 var(--drop);padding:22px 16px;text-align:center;margin-bottom:18px;
   background-image:radial-gradient(rgba(255,255,255,.06) 1.5px,transparent 2px);background-size:14px 14px;
 }
+.crono .fases{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .crono .fase{display:inline-block;background:var(--pink);color:#fff;font:600 1rem var(--title);padding:4px 16px;border-radius:999px;border:2px solid #fff;letter-spacing:.06em;text-transform:uppercase}
-.crono .fase.desc{background:var(--sky);color:#1d1b3a}
+.crono .fase.campo{background:#3ddc84;color:#1d1b3a}
+.crono .fase.blanca{background:#fff;color:#1d1b3a}
+.crono .fase.roja{background:#ff4d4d;color:#fff}
 .crono .reloj{
   font:700 clamp(4.2rem,24vw,8.5rem)/1 var(--title);color:#ffd23f;margin:14px 0 10px;
   text-shadow:0 0 22px rgba(255,210,63,.55),4px 4px 0 #000;font-variant-numeric:tabular-nums;
 }
-.progreso{height:14px;border-radius:99px;background:rgba(255,255,255,.12);border:2px solid #fff;overflow:hidden;max-width:420px;margin:0 auto 18px}
-.progreso i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#3ddc84,#ffd23f,#ff4d8d);transition:width 1s linear}
+.progreso{position:relative;height:14px;border-radius:99px;background:rgba(255,255,255,.12);border:2px solid #fff;overflow:hidden;max-width:420px;margin:0 auto 6px}
+.progreso i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3ddc84,#ffd23f,#ff4d4d);transition:width 1s linear}
+.marcas{display:flex;justify-content:space-between;max-width:420px;margin:0 auto 18px;font:600 .8rem var(--title);color:#c3bde8}
 .crono .botones{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .redondo{
   width:70px;height:70px;border-radius:50%;border:3px solid #fff;background:#2c2660;color:#fff;
@@ -325,8 +346,11 @@ td.tot{font:700 1.2rem var(--title);text-align:center}
 .redondo:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
 .crono .botones small{display:block;font:600 .8rem var(--title);margin-top:4px;color:#c3bde8}
 .aviso{margin-top:16px;font:600 1.05rem var(--title);color:#c3bde8;min-height:1.6em}
-.aviso.grita{color:#ffd23f;font-size:1.7rem;animation:grita .5s ease-in-out 6}
-@keyframes grita{50%{transform:scale(1.15)}}
+.aviso.grita{color:#ffd23f;font-size:1.6rem;animation:grita .5s ease-in-out 6}
+@keyframes grita{50%{transform:scale(1.12)}}
+.cuenta{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.cuenta .num10{font:700 4rem/1 var(--title);min-width:2ch;text-align:center;color:var(--pink);text-shadow:3px 3px 0 var(--drop);font-variant-numeric:tabular-nums}
+.cuenta .num10.fin{color:var(--loss)}
 
 /* ---------- roles y conflictos ---------- */
 .semaforo{display:grid;gap:12px}
@@ -342,7 +366,7 @@ td.tot{font:700 1.2rem var(--title);text-align:center}
 .tarjeta b{font:600 1.08rem var(--title);display:block}
 
 /* ---------- evaluación ---------- */
-.preguntas{display:grid;gap:10px;counter-reset:q}
+.preguntas{display:grid;gap:10px}
 .pregunta{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;background:var(--panel2);border:2.5px solid var(--stroke);border-radius:14px;padding:10px 12px}
 .pregunta b{font:600 1.05rem var(--title)}
 .escala{display:flex;gap:4px;font-size:1.5rem}
@@ -365,15 +389,15 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 }
 </style>
 </head>
-<body data-n="4">
+<body data-n="4" data-clase="5">
 <canvas id="confeti" aria-hidden="true"></canvas>
 
 <header>
   <div class="wrap">
-    <div class="ball" aria-hidden="true">🏐</div>
+    <div class="ball" aria-hidden="true">🥎</div>
     <div>
-      <h1>Torneo de colpbol</h1>
-      <p>¡Gana el equipo que mejor coopera!</p>
+      <h1>Torneo de datchball</h1>
+      <p>¡Esquiva, atrapa y salva a tu equipo!</p>
       <span class="chip-liga" id="chipLiga">Liga de 5º</span>
     </div>
   </div>
@@ -384,7 +408,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     <button role="tab" aria-selected="true" data-tab="inicio">🏠 Inicio</button>
     <button role="tab" aria-selected="false" data-tab="reglas">📜 Reglas</button>
     <button role="tab" aria-selected="false" data-tab="equipos">👕 Equipos</button>
-    <button role="tab" aria-selected="false" data-tab="calendario">🏐 Partidos</button>
+    <button role="tab" aria-selected="false" data-tab="calendario">🥎 Partidos</button>
     <button role="tab" aria-selected="false" data-tab="clasificacion">🏆 Clasificación</button>
     <button role="tab" aria-selected="false" data-tab="cronometro">⏱️ Crono</button>
     <button role="tab" aria-selected="false" data-tab="roles">🤝 Roles</button>
@@ -413,11 +437,11 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
   <!-- INICIO -->
   <section role="tabpanel" id="inicio" class="on">
     <div class="titulo"><span class="ico">🏁</span><h2>¿Cómo se gana?</h2></div>
-    <p class="lead">Cada partido reparte hasta 6 puntos por equipo. Marcar goles cuenta… ¡pero jugar limpio cuenta lo mismo!</p>
+    <p class="lead">En datchball no hay empates: cada partido lo gana alguien. Pero en este torneo jugar limpio vale tanto como ganar.</p>
 
     <div class="card">
       <div class="formula">
-        <div class="burbuja b1">🏆 Resultado<small>Ganas 3 · Empatas 2 · Pierdes 1</small></div>
+        <div class="burbuja b1">🏆 Resultado<small>Ganas 3 · Pierdes 1</small></div>
         <span>+</span>
         <div class="burbuja b2">🤝 Juego limpio<small>Hasta 3 puntos (y +1 extra)</small></div>
         <span>=</span>
@@ -425,7 +449,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
       </div>
       <div class="compara">
         <div class="caso bien"><span class="em">😎</span><div><b>Perder jugando limpio</b>1 + 3 = <b style="display:inline">4 puntos</b></div></div>
-        <div class="caso mal"><span class="em">😤</span><div><b>Ganar discutiendo</b>3 + 0 = <b style="display:inline">3 puntos</b></div></div>
+        <div class="caso mal"><span class="em">😤</span><div><b>Ganar sin juego limpio</b>3 + 0 = <b style="display:inline">3 puntos</b></div></div>
       </div>
     </div>
 
@@ -434,13 +458,14 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
       <div class="ahora">
         <div class="ahora-box"><div class="et">Va líder</div><div class="val" id="ahoraLider"></div></div>
         <div class="ahora-box"><div class="et">Más juego limpio</div><div class="val" id="ahoraLimpio"></div></div>
+        <div class="ahora-box"><div class="et">Reyes del aire</div><div class="val" id="ahoraAires"></div></div>
       </div>
     </div>
 
     <div class="card">
       <h3>🗓️ El torneo en 5 sesiones</h3>
       <div class="pasos">
-        <div class="paso"><div class="num">1</div><div><b>Preparación</b><p>Hacemos equipos, elegimos nombre, mascota y grito, firmamos el contrato, repartimos roles y jugamos partidos de prueba.</p></div></div>
+        <div class="paso"><div class="num">1</div><div><b>Preparación</b><p>Hacemos equipos mixtos, elegimos nombre, mascota y grito, firmamos el contrato, repartimos roles, aprendemos las reglas y jugamos partidas de prueba.</p></div></div>
         <div class="paso"><div class="num">2</div><div><b>Jornada 1</b><p>Calentamiento, rondas 1 y 2 y clasificación.</p></div></div>
         <div class="paso"><div class="num">3</div><div><b>Jornada 2</b><p>Calentamiento, rondas 3 y 4 y clasificación.</p></div></div>
         <div class="paso"><div class="num">4</div><div><b>Jornada 3</b><p><span class="solo4">Rondas 5 y 6 y clasificación.</span><span class="solo5">Ronda 5 y tiempo de táctica por equipos.</span></p></div></div>
@@ -449,40 +474,41 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
       <h3 style="margin-top:20px">⏰ Una jornada (55 minutos)</h3>
       <div class="chips">
         <span class="chip">🔥 Calentamiento 8′</span>
-        <span class="chip">🏐 Ronda A 15′</span>
-        <span class="chip">🏐 Ronda B 15′</span>
+        <span class="chip">🥎 Ronda A 15′</span>
+        <span class="chip">🥎 Ronda B 15′</span>
         <span class="chip">🗣️ Asamblea 10′</span>
       </div>
-      <p class="note">El calentamiento lo dirigen los capitanes. En cada ronda hay 2 partidos a la vez, uno en cada media pista.</p>
+      <p class="note">El calentamiento lo dirigen los capitanes. En cada ronda hay 2 partidos a la vez, uno en cada campo. Cada partido es al mejor de 3 partidas: gana el primer equipo que consiga 2.</p>
     </div>
 
     <details class="profe">
       <summary>👩‍🏫 Zona profe: campo, material y recursos</summary>
-      <h3>Campo y material</h3>
-      <p>Se juega 5 contra 5 (4 de campo y portero) en media pista, en sentido transversal: así hay 2 partidos a la vez.</p>
+      <h3>Campo</h3>
+      <p>El reglamento recomienda un espacio cerrado, con paredes donde la pelota rebote. Las medidas van de 6 × 6 m para los más pequeños a 18 × 8 m para los mayores. Cada campo tiene una línea central y, en cada mitad, una línea blanca y una roja para acortarlo. En 4º (categoría benjamín) solo hay un acorte.</p>
+      <p>Para jugar 2 partidos a la vez, divide la pista en dos campos a lo ancho. Si puedes, haz que el fondo de cada campo sea una pared.</p>
+      <h3 style="margin-top:18px">Material</h3>
       <ul>
-        <li>2 balones blandos y que boten, de unos 65-72 cm de circunferencia (de voleibol blando o de gomaespuma).</li>
-        <li>4 porterías pequeñas, o conos a 3 metros de distancia.</li>
-        <li>Tiza o cinta para marcar un área semicircular de unos 4 metros delante de cada portería.</li>
-        <li>Petos de 2 colores por campo, silbato y cronómetro.</li>
+        <li>3 pelotas blandas de unos 16,5 cm por campo (6 en total). <span class="alevin">En 5º y 6º (alevín), el reglamento usa 2 pelotas «training», más blandas, y 1 oficial.</span><span class="benjamin">En 4º (benjamín), el reglamento usa 3 pelotas «training», las más blandas.</span></li>
+        <li>Cinta o tiza para la línea central y las líneas de acorte <span class="alevin">(blanca y roja)</span><span class="benjamin">(una por mitad)</span>.</li>
+        <li>Un banco al lado de cada campo para los eliminados.</li>
+        <li>Petos, silbato y cronómetro.</li>
       </ul>
-      <p class="note">Con 6 jugadores, uno queda en el banquillo y entra en cada cambio, que se hace cada 3 minutos con el silbato. El portero cambia en el descanso.</p>
       <h3 style="margin-top:18px">Equipos</h3>
-      <p>Los haces tú: mixtos, equilibrados en nivel y separando a quienes suelen chocar. Con 24-26 alumnos salen 4 equipos de 6 o 5 equipos de 5. Se mantienen igual todo el torneo.</p>
+      <p>Siempre mixtos, como manda el reglamento: en pista, 4-2 o 3-3, nunca 5 del mismo género. Juegan 6 contra 6. Con 24-26 alumnos salen 4 equipos de 6; con 5 equipos de 5 se juega 5 contra 5 (adaptación para clase). Si un equipo tiene 7, el séptimo espera en el banquillo y entra antes que los eliminados cuando su equipo hace un aire.</p>
       <h3 style="margin-top:18px">Recursos imprimibles</h3>
       <div class="scroll">
         <table>
           <thead><tr><th>Recurso</th><th>Cuántos</th></tr></thead>
           <tbody>
-            <tr><td>Reglas del colpbol (póster)</td><td>1 por grupo</td></tr>
+            <tr><td>Reglas del datchball (póster)</td><td>1 por grupo</td></tr>
             <tr><td>Semáforo de los conflictos (póster)</td><td>1 por grupo</td></tr>
             <tr><td>Contrato de equipo</td><td>1 por equipo</td></tr>
             <tr><td>Tarjetas de roles</td><td>1 juego por equipo</td></tr>
             <tr><td>Calendario de 4 o 5 equipos</td><td>1 por clase</td></tr>
-            <tr><td>Acta de partido</td><td>2 por ronda</td></tr>
+            <tr><td>Acta de partido (partidas, aires, juego limpio)</td><td>2 por ronda</td></tr>
             <tr><td>Clasificación</td><td>1 por clase</td></tr>
             <tr><td>Autoevaluación de equipo</td><td>1 por equipo</td></tr>
-            <tr><td>Tarjetas del árbitro (3 verdes y 3 azules)</td><td>1 juego por campo</td></tr>
+            <tr><td>Tarjetas del árbitro (verdes y azules)</td><td>1 juego por campo</td></tr>
             <tr><td>Diplomas</td><td>Según equipos</td></tr>
           </tbody>
         </table>
@@ -492,49 +518,103 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 
   <!-- REGLAS -->
   <section role="tabpanel" id="reglas">
-    <div class="titulo"><span class="ico">📜</span><h2>Reglas del colpbol</h2></div>
-    <p class="lead">Lo inventó un profe de Educación Física, Juanjo Bendicho, en 1997, para que juegue todo el equipo y nadie pueda ir solo.</p>
+    <div class="titulo"><span class="ico">📜</span><h2>Reglas del datchball</h2></div>
+    <p class="lead">Lo inventaron un maestro de Educación Física, Roberto Navarro, y sus alumnos de 5º en un colegio de Brea de Aragón (Zaragoza). Es un deporte siempre mixto en el que el respeto y la honestidad son lo primero.</p>
 
-    <div class="reglas">
-      <div class="regla"><span class="n">1</span><div class="e">✋</div><b>Solo se golpea</b><p>Con la mano abierta, el brazo o la parte de arriba del cuerpo. No se coge, no se retiene y no se lanza.</p></div>
-      <div class="regla"><span class="n">2</span><div class="e">🔁</div><b>Nunca dos veces seguidas</b><p>Antes de volver a golpear, el balón tiene que tocarlo otro jugador.</p></div>
-      <div class="regla"><span class="n">3</span><div class="e">🦶</div><b>Ni pies ni puños</b><p>No se juega con piernas, pies ni puño cerrado. Solo el portero puede usar los pies, dentro de su área y para defender.</p></div>
-      <div class="regla"><span class="n">4</span><div class="e">🥅</div><b>El área es del portero</b><p>Nadie más puede estar dentro del área.</p></div>
-      <div class="regla"><span class="n">5</span><div class="e">🙅</div><b>Sin empujar</b><p>No se empuja ni se agarra al rival.</p></div>
-      <div class="regla"><span class="n">6</span><div class="e">📏</div><b>Faltas desde la banda</b><p>Las faltas y los fueras se sacan desde la banda, con un golpe y con los rivales a 3 metros. No hay penaltis.</p></div>
-      <div class="regla"><span class="n">7</span><div class="e">🤷</div><b>«¡Rebote, seguimos!»</b><p>Si el balón te da en el pie sin querer, no es falta.</p></div>
-      <div class="regla"><span class="n">8</span><div class="e">⏱️</div><b>2 tiempos de 6 minutos</b><p>Con 1 minuto de descanso para cambiar de portero y hablar de táctica.</p></div>
+    <div class="card campo">
+      <h3>🏟️ El campo</h3>
+      <svg viewBox="0 0 420 250" role="img" aria-label="Campo de datchball: dos mitades separadas por la línea central, con una línea blanca y una roja en cada mitad, tres pelotas en el centro, cada equipo junto a su pared del fondo y un banco de eliminados al lado de cada campo.">
+        <rect x="6" y="12" width="12" height="186" rx="3" fill="var(--wall)" stroke="var(--stroke)" stroke-width="2"/>
+        <rect x="402" y="12" width="12" height="186" rx="3" fill="var(--wall)" stroke="var(--stroke)" stroke-width="2"/>
+        <rect x="22" y="20" width="376" height="170" rx="6" fill="var(--court)" stroke="var(--stroke)" stroke-width="4"/>
+        <line x1="88" y1="22" x2="88" y2="188" stroke="#1d1b3a" stroke-width="7"/>
+        <line x1="88" y1="22" x2="88" y2="188" stroke="#ffffff" stroke-width="4"/>
+        <line x1="332" y1="22" x2="332" y2="188" stroke="#1d1b3a" stroke-width="7"/>
+        <line x1="332" y1="22" x2="332" y2="188" stroke="#ffffff" stroke-width="4"/>
+        <g class="alevin">
+          <line x1="150" y1="22" x2="150" y2="188" stroke="#ff4d4d" stroke-width="5"/>
+          <line x1="270" y1="22" x2="270" y2="188" stroke="#ff4d4d" stroke-width="5"/>
+        </g>
+        <line x1="210" y1="20" x2="210" y2="190" stroke="#1d1b3a" stroke-width="6"/>
+        <circle cx="210" cy="60" r="11" fill="#ffd23f" stroke="#1d1b3a" stroke-width="3"/>
+        <circle cx="210" cy="105" r="11" fill="#ff4d8d" stroke="#1d1b3a" stroke-width="3"/>
+        <circle cx="210" cy="150" r="11" fill="#2ec4ff" stroke="#1d1b3a" stroke-width="3"/>
+        <g fill="#ff5a5a" stroke="#1d1b3a" stroke-width="2.5">
+          <circle cx="38" cy="38" r="9"/><circle cx="38" cy="66" r="9"/><circle cx="38" cy="94" r="9"/>
+          <circle cx="38" cy="122" r="9"/><circle cx="38" cy="150" r="9"/><circle cx="38" cy="176" r="9"/>
+        </g>
+        <g fill="#3d8bff" stroke="#1d1b3a" stroke-width="2.5">
+          <circle cx="382" cy="38" r="9"/><circle cx="382" cy="66" r="9"/><circle cx="382" cy="94" r="9"/>
+          <circle cx="382" cy="122" r="9"/><circle cx="382" cy="150" r="9"/><circle cx="382" cy="176" r="9"/>
+        </g>
+        <rect x="30" y="208" width="160" height="34" rx="8" fill="var(--panel)" stroke="var(--stroke)" stroke-width="2.5"/>
+        <rect x="230" y="208" width="160" height="34" rx="8" fill="var(--panel)" stroke="var(--stroke)" stroke-width="2.5"/>
+        <text x="110" y="231" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="15" fill="var(--ink)">🪑 Eliminados A</text>
+        <text x="310" y="231" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="15" fill="var(--ink)">🪑 Eliminados B</text>
+      </svg>
+      <div class="leyenda">
+        <span><i style="background:#1d1b3a"></i>Línea central: no se pisa</span>
+        <span><i style="background:#fff"></i><span class="alevin">Línea blanca: 1er acorte (min 3)</span><span class="benjamin">Línea de acorte (min 3)</span></span>
+        <span class="alevin"><i style="background:#ff4d4d"></i>Línea roja: 2º acorte (min 6)</span>
+        <span><i style="background:var(--wall)"></i>Pared del fondo: aquí se sale</span>
+      </div>
     </div>
 
-    <div class="titulo"><span class="ico">💥</span><h2>Superreglas del torneo</h2></div>
-    <p class="lead">Estas dos hacen que gane el equipo, no una sola persona.</p>
+    <div class="reglas">
+      <div class="regla"><span class="n">1</span><div class="e">🎯</div><b>El objetivo</b><p>Eliminar a todos los jugadores del otro equipo. Cada vez que lo consigues ganas una partida. Gana el partido quien llegue antes a 2 partidas.</p></div>
+      <div class="regla"><span class="n">2</span><div class="e">📣</div><b>«¡DATCHBALL!»</b><p>Os saludáis en el centro y cada uno toca la pared del fondo de su campo. Las 3 pelotas están en la línea central. Cuando el árbitro grita «¡Datchball!», ¡a por ellas! Si salís antes, las pelotas son para el otro equipo.</p></div>
+      <div class="regla"><span class="n">3</span><div class="e">💥</div><b>Cómo te eliminan</b><p>Si una pelota lanzada te da, con o sin bote, y después toca el suelo, la pared o el techo, estás eliminado. La cabeza, el pelo y la ropa también cuentan.</p></div>
+      <div class="regla"><span class="n">4</span><div class="e">✋</div><b>El AIRE salva</b><p>Si atrapas una pelota lanzada antes de que toque el suelo o la pared, salvas al primer compañero eliminado. Si no hay nadie eliminado, el aire se pierde: no se guardan.</p></div>
+      <div class="regla"><span class="n">5</span><div class="e">🙋</div><b>Reconócelo tú</b><p>Si te dan, levantas la mano, dejas tu pelota en el suelo y vas al banco, en orden de eliminación. No hace falta que lo vea el árbitro.</p></div>
+      <div class="regla"><span class="n">6</span><div class="e">🪑</div><b>Desde el banco, solo animar</b><p>Los eliminados no tocan las pelotas. Cuando te salvan, tienes 10 segundos para activarte tocando la pared o la línea del fondo.</p></div>
+      <div class="regla"><span class="n">7</span><div class="e">🚫</div><b>La línea central no se pisa</b><p>Muévete libremente por tu campo, pero si pisas la línea central o el campo contrario, quedas eliminado.</p></div>
+      <div class="regla"><span class="n">8</span><div class="e">🛡️</div><b>Escudo</b><p>Puedes desviar lanzamientos con la pelota que tienes en las manos. La mano que la sujeta cuenta como escudo. Si la pelota desviada te da a ti o a un compañero y cae, estáis eliminados. Si se te cae el escudo, no pasa nada.</p></div>
+      <div class="regla"><span class="n">9</span><div class="e">⏳</div><b>¡Lanza!</b><p>El equipo que tiene más pelotas está obligado a lanzar. Si tarda, el árbitro cuenta de 10 a 0. Si llega a 0 sin lanzar, pierde todas sus pelotas.</p></div>
+      <div class="regla"><span class="n">10</span><div class="e">🙌</div><b>Solo con las manos</b><p>Se lanza o se golpea con las manos. No vale dar patadas a propósito ni esconder la pelota dentro de la camiseta.</p></div>
+      <div class="regla"><span class="n">11</span><div class="e">✂️</div><b>El campo se encoge</b><p><span class="alevin">A los 3 minutos el árbitro acorta el campo con la línea blanca, y a los 6 minutos con la roja.</span><span class="benjamin">A los 3 minutos el árbitro acorta el campo con la línea de acorte.</span> Lo hace cuando un equipo tiene 2 pelotas y el otro 1.</p></div>
+      <div class="regla"><span class="n">12</span><div class="e">⚔️</div><b>Duelo 1 contra 1</b><p>Si los últimos jugadores se eliminan a la vez: cada uno en la línea roja, con una pelota a sus pies. «¡Datchball!»: un solo lanzamiento y 10 segundos para cada uno.</p></div>
+    </div>
+
+    <div class="titulo"><span class="ico">🔥</span><h2>Jugadas épicas</h2></div>
+    <p class="lead">Las jugadas que hacen gritar a toda la grada.</p>
+    <div class="reglas epicas">
+      <div class="regla"><span class="tag">La mejor</span><div class="e">✋</div><b>Aire</b><p>Atrapar un lanzamiento al vuelo es la acción más valorada del datchball: ¡vuelve a la pista un compañero!</p></div>
+      <div class="regla"><div class="e">💥</div><b>Combo</b><p>Un solo lanzamiento que da a varios rivales sin botar entre ellos los elimina a todos.</p></div>
+      <div class="regla"><div class="e">🦘</div><b>Kamikaze</b><p>Saltas hacia el campo contrario y lanzas antes de caer. Tu lanzamiento vale, aunque tú quedas eliminado al pisar su campo.</p></div>
+      <div class="regla"><div class="e">🦸</div><b>Rescate</b><p>Si la pelota da a un compañero y otro la atrapa antes de que caiga, ¡es aire! Tu compañero no queda eliminado y además salváis a otro.</p></div>
+      <div class="regla"><div class="e">🛡️</div><b>Doble escudo</b><p>Puedes defenderte con dos pelotas a la vez, una en cada mano.</p></div>
+    </div>
+
+    <div class="titulo"><span class="ico">💪</span><h2>Superreglas del torneo</h2></div>
+    <p class="lead">Estas tres hacen que gane el equipo, no una sola persona.</p>
     <div class="super" style="margin-bottom:22px">
-      <div class="regla"><div class="e">⚽</div><b>Gol de equipo</b><p>Un gol solo vale si antes han tocado el balón al menos 3 jugadores de tu equipo (2 en 4º).</p></div>
-      <div class="regla"><div class="e">🔄</div><b>Todos en el campo</b><p>Cada jugador juega como mínimo un tiempo completo y hace de portero al menos una vez por jornada.</p></div>
+      <div class="regla"><div class="e">🔄</div><b>Todos lanzan</b><p>Las pelotas se pasan: nadie las acapara y todo el equipo lanza en cada partida.</p></div>
+      <div class="regla"><div class="e">👫</div><b>Siempre mixto</b><p>En la pista, 4-2 o 3-3. Nunca juegan 5 del mismo género a la vez.</p></div>
+      <div class="regla"><div class="e">🙋</div><b>Honestidad ante todo</b><p>Si te dan, lo reconoces aunque nadie lo haya visto. Es la mejor forma de ganar una tarjeta verde.</p></div>
     </div>
 
     <div class="card">
       <h3>🤝 Puntos de juego limpio</h3>
       <p>Al acabar cada partido, el árbitro da a cada equipo un punto por cada cosa que cumpla:</p>
       <div class="chips" style="margin-bottom:10px">
-        <span class="chip">🤝 Respeto: sin insultos, burlas ni protestas</span>
-        <span class="chip">💪 Cooperación: han jugado todos y se han animado</span>
-        <span class="chip">✋ Saludo: chocar las manos al empezar y al acabar</span>
+        <span class="chip">🤝 Respeto: saludo al empezar, sin burlas ni protestas, y os felicitáis al acabar</span>
+        <span class="chip">🙋 Honestidad: reconocen cuando les dan, levantando la mano</span>
+        <span class="chip">💪 Cooperación: lanzan todos y se animan desde el banco</span>
       </div>
       <p><b>⭐ Punto extra (+1):</b> para el equipo de servicio que arbitra y anota bien, o para los dos equipos si el autoarbitraje sale sin discusiones.</p>
-      <p><b>⚖️ Si hay empate en la clasificación</b> gana quien tenga más puntos de juego limpio. Si sigue el empate: el resultado entre los dos equipos, luego la diferencia de goles y luego los goles marcados.</p>
+      <p><b>⚖️ Si hay empate en la clasificación</b> gana quien tenga más puntos de juego limpio. Si sigue el empate: el resultado entre los dos equipos, después la diferencia de partidas ganadas y perdidas, las partidas ganadas y las tarjetas verdes.</p>
     </div>
   </section>
 
   <!-- EQUIPOS -->
   <section role="tabpanel" id="equipos">
     <div class="titulo"><span class="ico">👕</span><h2>Nuestros equipos</h2></div>
-    <p class="lead">Elegid un nombre chulo y una mascota. Toca la mascota para cambiarla.</p>
+    <p class="lead">Elegid un nombre chulo y una mascota. Toca la mascota para cambiarla. Recordad: los equipos de datchball son siempre mixtos.</p>
     <div class="eqs" id="tarjetasEquipos"></div>
 
     <details class="profe noprint" style="margin-top:22px">
       <summary>👩‍🏫 Zona profe: reparto rápido de la clase</summary>
-      <p class="note">Escribe los nombres del alumnado, uno por línea. El reparto es al azar: revísalo después para equilibrar niveles y separar a quienes suelen chocar.</p>
+      <p class="note">Escribe los nombres del alumnado, uno por línea. El reparto es al azar: revísalo después para que los equipos sean mixtos (4-2 o 3-3) y equilibrados, y para separar a quienes suelen chocar.</p>
       <label class="lab" for="listaAlumnos">Alumnado de la clase</label>
       <textarea id="listaAlumnos" placeholder="Ana&#10;Bruno&#10;Carla&#10;…"></textarea>
       <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px">
@@ -546,7 +626,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 
   <!-- PARTIDOS -->
   <section role="tabpanel" id="calendario">
-    <div class="titulo"><span class="ico">🏐</span><h2>Partidos</h2></div>
+    <div class="titulo"><span class="ico">🥎</span><h2>Partidos</h2></div>
     <p class="lead" id="calendarioIntro"></p>
     <div id="calendarioLista"></div>
     <div class="noprint" style="margin-top:10px">
@@ -566,14 +646,14 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
         <table id="tablaClasificacion">
           <thead>
             <tr>
-              <th class="num">#</th><th>Equipo</th><th class="num">PJ</th><th class="num">G</th><th class="num">E</th><th class="num">P</th>
-              <th class="num">GF</th><th class="num">GC</th><th class="num">🏆</th><th class="num">🤝</th><th class="num">Total</th><th></th>
+              <th class="num">#</th><th>Equipo</th><th class="num">PJ</th><th class="num">G</th><th class="num">P</th>
+              <th class="num">PF</th><th class="num">PC</th><th class="num">✋</th><th class="num">🏆</th><th class="num">🤝</th><th class="num">Total</th><th></th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
-      <p class="note" style="margin-top:12px">PJ: partidos jugados · G, E, P: ganados, empatados y perdidos · GF, GC: goles a favor y en contra · 🏆 puntos por resultado · 🤝 puntos de juego limpio.</p>
+      <p class="note" style="margin-top:12px">PJ: partidos jugados · G, P: ganados y perdidos · PF, PC: partidas a favor y en contra · ✋ aires · 🏆 puntos por resultado · 🤝 puntos de juego limpio.</p>
     </div>
 
     <div class="card">
@@ -581,6 +661,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
       <div class="premios">
         <div class="premio"><span class="em">🏆</span><div><b>Campeón de la liga</b>El equipo con más puntos totales.</div></div>
         <div class="premio"><span class="em">🌟</span><div><b>Premio al juego limpio</b>Más puntos de juego limpio y tarjetas verdes.</div></div>
+        <div class="premio"><span class="em">✋</span><div><b>Reyes del aire</b>El equipo que más compañeros ha salvado con aires.</div></div>
         <div class="premio"><span class="em">🤝</span><div><b>Mejor equipo</b>Lo votáis vosotros: el que mejor ha cooperado.</div></div>
         <div class="premio"><span class="em">📜</span><div><b>Diploma para todos</b>Con el nombre de vuestro equipo.</div></div>
       </div>
@@ -590,26 +671,42 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
   <!-- CRONÓMETRO -->
   <section role="tabpanel" id="cronometro">
     <div class="titulo"><span class="ico">⏱️</span><h2>Cronómetro</h2></div>
-    <p class="lead">2 tiempos de 6 minutos con 1 minuto de descanso. A mitad de cada tiempo… ¡cambio!</p>
+    <p class="lead">Una partida de datchball no tiene tiempo fijo: dura hasta que un equipo elimina al otro. Para que no se alargue, el campo se encoge. <span class="alevin">A los 3 minutos, línea blanca; a los 6, línea roja.</span><span class="benjamin">A los 3 minutos, línea de acorte.</span></p>
     <div class="crono">
-      <span class="fase" id="fase">1er tiempo</span>
-      <div class="reloj" id="reloj">6:00</div>
+      <div class="fases">
+        <span class="fase" id="numPartida">Partida 1</span>
+        <span class="fase campo" id="fase">Campo entero</span>
+      </div>
+      <div class="reloj" id="reloj">0:00</div>
       <div class="progreso"><i id="barraCrono"></i></div>
+      <div class="marcas"><span>0:00</span><span id="marca3">3:00 ⬜</span><span class="alevin">6:00 🟥</span></div>
       <div class="botones">
         <div><button class="redondo" id="btnReset" type="button" aria-label="Reiniciar">↺</button><small>Reiniciar</small></div>
-        <div><button class="redondo play" id="btnStart" type="button" aria-label="Empezar">▶</button><small id="txtStart">Empezar</small></div>
-        <div><button class="redondo" id="btnSalto" type="button" aria-label="Siguiente fase">⏭</button><small>Siguiente</small></div>
+        <div><button class="redondo play" id="btnStart" type="button" aria-label="Empezar">▶</button><small id="txtStart">¡Datchball!</small></div>
+        <div><button class="redondo" id="btnNueva" type="button" aria-label="Nueva partida">🏁</button><small>Nueva partida</small></div>
       </div>
-      <div class="aviso" id="avisoCambio">Aviso de cambio a mitad de cada tiempo.</div>
+      <div class="aviso" id="avisoCrono">Pulsa ▶ cuando el árbitro grite «¡Datchball!».</div>
     </div>
+
+    <div class="card">
+      <div class="cuenta">
+        <div>
+          <h3>⏳ Cuenta atrás de 10</h3>
+          <p class="note" style="margin:0">Para el equipo que tarda en lanzar o para el duelo 1 contra 1. Los últimos 5 segundos se cuentan en voz alta.</p>
+        </div>
+        <div class="num10" id="num10">10</div>
+        <button class="btn amar" id="btnCuenta" type="button">▶ Contar</button>
+      </div>
+    </div>
+
     <div class="grid2">
       <div class="card">
-        <h3>⏸️ Tiempo muerto</h3>
-        <p>Cada equipo tiene un tiempo muerto de 30 segundos por partido, para calmarse o cambiar de táctica.</p>
+        <h3>🔄 Entre partidas</h3>
+        <p>Después de cada partida los equipos cambian de campo. Cada jugador elige dónde se coloca, tocando la pared del fondo.</p>
       </div>
       <div class="card">
         <h3>🫶 Minuto de equipo</h3>
-        <p>En el descanso os juntáis en corro: el estratega dice una idea y el animador dice algo que esté saliendo bien.</p>
+        <p>Entre partidas os juntáis en corro: el estratega dice una idea y el animador dice algo que esté saliendo bien.</p>
       </div>
     </div>
   </section>
@@ -619,17 +716,17 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     <div class="titulo"><span class="ico">🤝</span><h2>Roles del equipo</h2></div>
     <p class="lead">Cada jornada cambiáis de rol, para que todos paséis por todos.</p>
     <div class="reglas">
-      <div class="regla"><div class="e">🧢</div><b>Capitán o capitana</b><p>Habla con el árbitro, dirige el calentamiento y el grito, y organiza los cambios.</p></div>
-      <div class="regla"><div class="e">📣</div><b>Animador o animadora</b><p>Se asegura de que todos tocan el balón y anima, sobre todo después de un fallo.</p></div>
+      <div class="regla"><div class="e">🧢</div><b>Capitán o capitana</b><p>Sortea el campo, habla con el árbitro, dirige el calentamiento y el grito del equipo.</p></div>
+      <div class="regla"><div class="e">📣</div><b>Animador o animadora</b><p>Anima sin parar, también desde el banco, y se asegura de que todos lanzan.</p></div>
       <div class="regla"><div class="e">🕊️</div><b>Mediador o mediadora</b><p>Pone en marcha el semáforo cuando hay un conflicto en su equipo.</p></div>
-      <div class="regla"><div class="e">📝</div><b>Anotador o anotadora</b><p>Rellena el acta con el árbitro: goles, tarjetas verdes y puntos de juego limpio.</p></div>
-      <div class="regla"><div class="e">🎒</div><b>Material</b><p>Prepara petos y balón y los recoge al acabar.</p></div>
-      <div class="regla"><div class="e">🧠</div><b>Estratega</b><p>En equipos de 6: propone en el descanso una idea de táctica para el segundo tiempo.</p></div>
+      <div class="regla"><div class="e">📝</div><b>Anotador o anotadora</b><p>Rellena el acta con el árbitro: partidas ganadas, aires, tarjetas verdes y juego limpio.</p></div>
+      <div class="regla"><div class="e">🎒</div><b>Material</b><p>Coloca las 3 pelotas en la línea central antes de cada partida, prepara los petos y lo recoge todo al acabar.</p></div>
+      <div class="regla"><div class="e">🧠</div><b>Estratega</b><p>Entre partidas propone una táctica: quién hace de escudo, a quién lanzar, cómo pasarse las pelotas.</p></div>
     </div>
 
     <div class="card">
       <h3>✍️ Contrato de equipo</h3>
-      <p>En la primera sesión cada equipo elige nombre y grito y escribe 3 compromisos, por ejemplo «animamos después de un fallo», «pasamos a todos» o «aceptamos lo que diga el árbitro». Lo firmáis todos y lo repasáis en cada asamblea.</p>
+      <p>En la primera sesión cada equipo elige nombre y grito y escribe 3 compromisos, por ejemplo «reconocemos cuando nos dan», «nos pasamos las pelotas» o «aceptamos lo que diga el árbitro». Lo firmáis todos y lo repasáis en cada asamblea.</p>
     </div>
 
     <div class="titulo"><span class="ico">🚦</span><h2>Semáforo de los conflictos</h2></div>
@@ -646,18 +743,20 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
       <h3>📋 Normas de todos los partidos</h3>
       <ul>
         <li>Solo el capitán o la capitana habla con el árbitro, con calma y levantando la mano.</li>
-        <li>Lo que decide el árbitro vale durante el partido.</li>
+        <li>El árbitro es una figura respetada: lo que decide vale durante el partido.</li>
+        <li>Nada de contacto con jugadores del otro equipo.</li>
         <li>Si no estás de acuerdo con algo, lo cuentas en la asamblea final, no en el campo.</li>
+        <li>Al acabar el partido, os felicitáis por el esfuerzo.</li>
       </ul>
     </div>
 
     <div class="card">
       <h3>🃏 Tarjetas</h3>
       <div class="tarjetas">
-        <div class="tarjeta verde"><span class="fis"></span><div><b>Verde, de juego limpio</b>Por una buena acción, como ayudar a levantarse a un rival o reconocer una falta propia. Se apunta en el acta y cuenta para el premio al juego limpio.</div></div>
+        <div class="tarjeta verde"><span class="fis"></span><div><b>Verde, de juego limpio</b>Por reconocer que te han dado sin que el árbitro lo viera, tratar con deportividad al rival o aceptar la derrota con buena cara. Se apunta en el acta y cuenta para el premio al juego limpio.</div></div>
         <div class="tarjeta azul"><span class="fis"></span><div><b>Azul, de reflexión</b>Por protestar, insultar o empujar. Sales 1 minuto al rincón de la calma, haces el semáforo y vuelves. Tu equipo pierde el punto de respeto de ese partido.</div></div>
       </div>
-      <p class="note" style="margin-top:14px"><b>Asamblea de cada jornada (10′):</b> ¿qué ha ido bien?, ¿qué conflicto ha habido y cómo lo hemos resuelto? Se aplaude más una buena solución que un gol.</p>
+      <p class="note" style="margin-top:14px"><b>Asamblea de cada jornada (10′):</b> ¿qué ha ido bien?, ¿qué conflicto ha habido y cómo lo hemos resuelto? Se aplaude más una buena solución que una eliminación.</p>
     </div>
   </section>
 
@@ -667,8 +766,9 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     <p class="lead">Al final de cada jornada, 2 minutos: el equipo se puntúa del 1 al 4 y el mediador lo apunta.</p>
     <div class="card">
       <div class="preguntas">
-        <div class="pregunta"><b>¿Hemos jugado todos?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
-        <div class="pregunta"><b>¿Nos hemos animado?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
+        <div class="pregunta"><b>¿Hemos lanzado todos?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
+        <div class="pregunta"><b>¿Nos hemos animado, también desde el banco?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
+        <div class="pregunta"><b>¿Hemos reconocido cuando nos daban?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
         <div class="pregunta"><b>¿Hemos respetado al árbitro y al rival?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
         <div class="pregunta"><b>¿Hemos cumplido nuestro contrato?</b><div class="escala"><span data-n="1">😟</span><span data-n="2">🙂</span><span data-n="3">😀</span><span data-n="4">🤩</span></div></div>
       </div>
@@ -676,16 +776,17 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 
     <details class="profe">
       <summary>👩‍🏫 Zona profe: qué observar</summary>
-      <p>Se evalúa sobre todo cómo juega cada alumno con su equipo, no cuántos goles mete. Lista de control de cada alumno (sí, a veces o no):</p>
+      <p>Se evalúa sobre todo cómo juega cada alumno con su equipo, no a cuántos elimina. Lista de control de cada alumno (sí, a veces o no):</p>
       <ul>
-        <li>Pasa el balón a todos los compañeros, no solo a sus amigos.</li>
+        <li>Pasa la pelota a todos los compañeros, no solo a sus amigos.</li>
+        <li>Reconoce cuando le eliminan, sin que se lo diga el árbitro.</li>
         <li>Respeta las reglas y las decisiones del árbitro.</li>
         <li>Cumple su rol en el equipo.</li>
         <li>Usa el semáforo y resuelve los conflictos hablando.</li>
-        <li>Anima a los compañeros y acepta la derrota.</li>
+        <li>Anima a los compañeros, también desde el banco, y acepta la derrota.</li>
       </ul>
       <p class="note">Si un alumno repite tarjeta azul, hablas con él al final de la sesión, a solas.</p>
-      <p class="note">Fuente: <a href="https://efdeportes.com/efd183/colpbol-un-nuevo-deporte-de-equipo.htm" target="_blank" rel="noopener">Colpbol, un nuevo deporte de equipo (EFDeportes, 2013)</a>.</p>
+      <p class="note">Fuentes: <a href="http://wasg.info/mundialito/Reglamento_Datchball.pdf" target="_blank" rel="noopener">Reglamento oficial de datchball 2024</a> y <a href="https://www.datchball.com" target="_blank" rel="noopener">datchball.com</a> (Federación Aragonesa de Datchball).</p>
     </details>
   </section>
 
@@ -708,6 +809,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
   var LETRAS = ["A","B","C","D","E"];
   var COLORES = ["#ff5a5a","#3d8bff","#2ecc71","#ffc21a","#b066ff"];
   var MASCOTAS = ["🦁","🦈","🦖","🐝","🐉","🐯","🦅","🐺","🦊","🐻","🐼","🐙","🦄","🐸","🚀","⚡","🔥","🌪️"];
+  var MAX_PARTIDAS = 3;
   var FIXTURES = {
     4: {
       rondas: [
@@ -732,7 +834,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     }
   };
 
-  var STORE = "colpbol-torneo-v1";
+  var STORE = "datchball-torneo-v1";
   var estado = cargar();
 
   function claseVacia(){
@@ -743,7 +845,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     };
   }
   function normalizar(d){
-    var base = { clase:"5", nequipos:{"4":4,"5":4,"6":5}, clases:{} };
+    var base = { clase:"5", nequipos:{"4":4,"5":4,"6":4}, clases:{} };
     if(d && typeof d === "object"){
       base.clase = ["4","5","6"].indexOf(String(d.clase)) >= 0 ? String(d.clase) : base.clase;
       base.nequipos = Object.assign(base.nequipos, d.nequipos || {});
@@ -764,6 +866,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
   }
   function clase(){ return estado.clases[estado.clase]; }
   function nEq(){ return estado.nequipos[estado.clase] === 5 ? 5 : 4; }
+  function esBenjamin(){ return estado.clase === "4"; }
   function nombre(i){
     var n = clase().nombres[i];
     return (n && n.trim()) ? n.trim() : ("Equipo " + LETRAS[i]);
@@ -786,24 +889,26 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     if(html !== undefined) e.innerHTML = html;
     return e;
   }
+
+  /* Acta de un partido: partidas ganadas (pl, pv), juego limpio (fl, fv, el, ev),
+     tarjetas verdes (vl, vv) y aires (al, av) de cada equipo. */
   function claveActa(r,p){ return nEq() + "-" + r + "-" + p; }
   function acta(r,p){
     var k = claveActa(r,p), a = clase().actas[k];
     if(!a){
-      a = { gl:null, gv:null, fl:[false,false,false], fv:[false,false,false], el:false, ev:false, vl:0, vv:0 };
+      a = { pl:null, pv:null, fl:[false,false,false], fv:[false,false,false], el:false, ev:false, vl:0, vv:0, al:0, av:0 };
       clase().actas[k] = a;
     }
     return a;
   }
-  function jugado(a){ return a && a.gl !== null && a.gl !== undefined && a.gv !== null && a.gv !== undefined; }
+  function empezado(a){ return a && a.pl !== null && a.pl !== undefined && a.pv !== null && a.pv !== undefined; }
+  function decidido(a){ return empezado(a) && a.pl !== a.pv; }
   function puntosPartido(a){
     var limpL = a.fl.filter(Boolean).length + (a.el ? 1 : 0);
     var limpV = a.fv.filter(Boolean).length + (a.ev ? 1 : 0);
     var rL = 0, rV = 0;
-    if(jugado(a)){
-      if(a.gl > a.gv){ rL = 3; rV = 1; }
-      else if(a.gl < a.gv){ rL = 1; rV = 3; }
-      else { rL = 2; rV = 2; }
+    if(decidido(a)){
+      if(a.pl > a.pv){ rL = 3; rV = 1; } else { rL = 1; rV = 3; }
     }
     return { l: rL + limpL, v: rV + limpV };
   }
@@ -892,6 +997,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     });
     document.getElementById("chipLiga").textContent = "Liga de " + estado.clase + "º";
     document.body.dataset.n = nEq();
+    document.body.dataset.clase = estado.clase;
   }
   segClase.addEventListener("click", function(e){
     var b = e.target.closest("button"); if(!b) return;
@@ -940,7 +1046,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
         inp.maxLength = 28;
         inp.addEventListener("input", function(){
           clase().nombres[i] = inp.value;
-          guardar(); pintarCalendario(); pintarClasificacion();
+          guardar(); pintarCalendario(); actualizarResumen();
         });
         info.appendChild(inp);
         top.appendChild(bm); top.appendChild(info);
@@ -954,7 +1060,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
           pb.setAttribute("aria-pressed", m === mascota(i));
           pb.addEventListener("click", function(){
             clase().mascotas[i] = m;
-            guardar(); pintarEquipos(); pintarCalendario(); pintarClasificacion();
+            guardar(); pintarEquipos(); pintarCalendario(); actualizarResumen();
             var nueva = document.querySelectorAll("#tarjetasEquipos .eq-top .masc")[i];
             if(nueva) confetiEn(nueva, 18);
           });
@@ -1001,9 +1107,9 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     var fx = FIXTURES[nEq()];
     var intro = document.getElementById("calendarioIntro");
     if(nEq() === 4){
-      intro.innerHTML = "Todos contra todos, ida y vuelta: 6 rondas de 2 partidos. En el campo 1 arbitra el profe y en el campo 2 hay <b>autoarbitraje</b>: quien hace la falta levanta la mano. Los suplentes hacen de anotadores.";
+      intro.innerHTML = "Todos contra todos, ida y vuelta: 6 rondas de 2 partidos, al mejor de 3 partidas. En el campo 1 arbitra el profe y en el campo 2 hay <b>autoarbitraje</b>: en datchball cada uno reconoce cuando le dan. Los del banco ayudan a anotar.";
     } else {
-      intro.innerHTML = "Todos contra todos: 5 rondas de 2 partidos. El <b>equipo de servicio</b> no juega esa ronda pero tiene trabajo: pone 2 árbitros, 2 anotadores y 1 cronometrador.";
+      intro.innerHTML = "Todos contra todos: 5 rondas de 2 partidos, al mejor de 3 partidas. El <b>equipo de servicio</b> no juega esa ronda pero tiene trabajo: pone 2 árbitros, 2 anotadores y 1 cronometrador que avisa de los acortes.";
     }
     var cont = document.getElementById("calendarioLista");
     cont.innerHTML = "";
@@ -1022,13 +1128,15 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 
   function crearPartido(r, p, l, v){
     var a = acta(r, p);
+    if(a.al === undefined) a.al = 0;
+    if(a.av === undefined) a.av = 0;
     var box = el("div", "match");
 
     var top = el("div", "match-top", "<span>📍 Campo " + (p + 1) + (p === 1 && nEq() === 4 ? " · autoarbitraje" : "") + "</span>");
     var borrar = el("button", "", "✖ Borrar");
     borrar.type = "button";
     borrar.addEventListener("click", function(){
-      if(!confirm("¿Borrar el resultado y el juego limpio de este partido?")) return;
+      if(!confirm("¿Borrar el resultado, los aires y el juego limpio de este partido?")) return;
       delete clase().actas[claveActa(r, p)];
       guardar();
       box.replaceWith(crearPartido(r, p, l, v));
@@ -1041,69 +1149,82 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     var salidaL, salidaV;
     function lado(i, campo){
       var d = el("div", "lado");
-      d.innerHTML = htmlMasc(i) + "<div class='nom'>" + escapar(nombre(i)) + "</div>";
-      var g = el("div", "goles");
+      d.innerHTML = htmlMasc(i) + "<div class='nom'>" + escapar(nombre(i)) + "</div><div class='et'>Partidas</div>";
+      var g = el("div", "tanteo");
       var menos = el("button", "", "−"); menos.type = "button";
-      menos.setAttribute("aria-label", "Quitar gol a " + nombre(i));
+      menos.setAttribute("aria-label", "Quitar una partida a " + nombre(i));
       var out = el("output");
       var mas = el("button", "mas", "+"); mas.type = "button";
-      mas.setAttribute("aria-label", "Gol de " + nombre(i));
+      mas.setAttribute("aria-label", "Partida ganada por " + nombre(i));
       mas.addEventListener("click", function(){
-        if(a.gl === null || a.gl === undefined) a.gl = 0;
-        if(a.gv === null || a.gv === undefined) a.gv = 0;
+        if(!empezado(a)){ a.pl = 0; a.pv = 0; }
+        if(a[campo] >= MAX_PARTIDAS) return;
         a[campo]++;
         guardar(); refrescar(); actualizarResumen();
         out.classList.remove("pop"); void out.offsetWidth; out.classList.add("pop");
-        confetiEn(mas, 22);
+        confetiEn(mas, decidido(a) && Math.max(a.pl, a.pv) >= 2 ? 50 : 22);
       });
       menos.addEventListener("click", function(){
-        if(!jugado(a)) return;
+        if(!empezado(a)) return;
         a[campo] = Math.max(0, a[campo] - 1);
         guardar(); refrescar(); actualizarResumen();
       });
       g.appendChild(menos); g.appendChild(out); g.appendChild(mas);
       d.appendChild(g);
-      if(campo === "gl") salidaL = out; else salidaV = out;
+      if(campo === "pl") salidaL = out; else salidaV = out;
       return d;
     }
-    marc.appendChild(lado(l, "gl"));
+    marc.appendChild(lado(l, "pl"));
     marc.appendChild(el("div", "vs", "VS"));
-    marc.appendChild(lado(v, "gv"));
+    marc.appendChild(lado(v, "pv"));
     box.appendChild(marc);
 
     var est = el("div", "estado");
     box.appendChild(est);
 
     var limpio = el("div", "limpio");
-    limpio.appendChild(grupoLimpio(l, "fl", "el", "vl"));
-    limpio.appendChild(grupoLimpio(v, "fv", "ev", "vv"));
+    limpio.appendChild(grupoEquipo(l, "fl", "el", "vl", "al"));
+    limpio.appendChild(grupoEquipo(v, "fv", "ev", "vv", "av"));
     box.appendChild(limpio);
 
     function refrescar(){
-      salidaL.textContent = jugado(a) ? a.gl : "–";
-      salidaV.textContent = jugado(a) ? a.gv : "–";
+      salidaL.textContent = empezado(a) ? a.pl : "–";
+      salidaV.textContent = empezado(a) ? a.pv : "–";
       est.innerHTML = "";
-      if(!jugado(a)){
-        est.appendChild(el("span", "", "⏳ Sin jugar · toca <b>+</b> para cada gol"));
-        var cero = el("button", "btn peq", "Fue 0 – 0"); cero.type = "button";
-        cero.addEventListener("click", function(){
-          a.gl = 0; a.gv = 0; guardar(); refrescar(); actualizarResumen();
-        });
-        est.appendChild(cero);
+      if(!empezado(a)){
+        est.appendChild(el("span", "", "⏳ Sin jugar · toca <b>+</b> cuando un equipo gane una partida"));
+      } else if(a.pl === a.pv){
+        est.appendChild(el("span", "", a.pl === 0 ? "🥎 En juego…" : "⚔️ ¡Empate a partidas! Jugad otra o un duelo 1 contra 1"));
       } else {
-        var txt = a.gl > a.gv ? "🎉 ¡Gana " + escapar(nombre(l)) + "!"
-                : a.gl < a.gv ? "🎉 ¡Gana " + escapar(nombre(v)) + "!"
-                : "🤝 ¡Empate!";
-        est.appendChild(el("span", "", txt));
+        var gana = a.pl > a.pv ? l : v;
+        var acabado = Math.max(a.pl, a.pv) >= 2;
+        est.appendChild(el("span", "", (acabado ? "🎉 ¡Gana " : "👉 Va ganando ") + escapar(nombre(gana)) + (acabado ? "!" : "")));
       }
       var pp = puntosPartido(a);
       est.appendChild(el("span", "pts", "Puntos: " + escapar(nombre(l)) + " " + pp.l + " · " + escapar(nombre(v)) + " " + pp.v));
     }
 
-    function grupoLimpio(i, campoF, campoExtra, campoVerde){
-      var CRIT = [["🤝","Respeto"],["💪","Cooperación"],["✋","Saludo"]];
+    function contador(tipo, etiqueta, campoN, ayuda){
+      var c = el("span", "contador " + tipo);
+      var n = el("span", "", etiqueta + " " + (a[campoN] || 0));
+      var bm = el("button", "menos", "−"); bm.type = "button"; bm.setAttribute("aria-label", "Quitar " + ayuda);
+      var bp = el("button", "", "+"); bp.type = "button"; bp.setAttribute("aria-label", "Añadir " + ayuda);
+      bp.addEventListener("click", function(){
+        a[campoN] = (a[campoN] || 0) + 1; n.textContent = etiqueta + " " + a[campoN];
+        guardar(); actualizarResumen(); confetiEn(bp, 14);
+      });
+      bm.addEventListener("click", function(){
+        a[campoN] = Math.max(0, (a[campoN] || 0) - 1); n.textContent = etiqueta + " " + a[campoN];
+        guardar(); actualizarResumen();
+      });
+      c.appendChild(n); c.appendChild(bm); c.appendChild(bp);
+      return c;
+    }
+
+    function grupoEquipo(i, campoF, campoExtra, campoVerde, campoAire){
+      var CRIT = [["🤝","Respeto"],["🙋","Honestidad"],["💪","Cooperación"]];
       var g = el("div", "limpio-eq");
-      g.appendChild(el("span", "lt", "Juego limpio · " + escapar(nombre(i))));
+      g.appendChild(el("span", "lt", escapar(nombre(i))));
       function tog(texto, get, set){
         var b = el("button", "tog", texto); b.type = "button";
         b.setAttribute("aria-pressed", get() ? "true" : "false");
@@ -1119,21 +1240,8 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
         g.appendChild(tog(c[0] + " " + c[1], function(){ return !!a[campoF][k]; }, function(x){ a[campoF][k] = x; }));
       });
       g.appendChild(tog("⭐ Extra", function(){ return !!a[campoExtra]; }, function(x){ a[campoExtra] = x; }));
-
-      var vd = el("span", "verdes");
-      var n = el("span", "", "🟩 " + (a[campoVerde] || 0));
-      var bm = el("button", "menos", "−"); bm.type = "button"; bm.setAttribute("aria-label", "Quitar tarjeta verde");
-      var bp = el("button", "", "+"); bp.type = "button"; bp.setAttribute("aria-label", "Añadir tarjeta verde");
-      bp.addEventListener("click", function(){
-        a[campoVerde] = (a[campoVerde] || 0) + 1; n.textContent = "🟩 " + a[campoVerde];
-        guardar(); actualizarResumen(); confetiEn(bp, 12);
-      });
-      bm.addEventListener("click", function(){
-        a[campoVerde] = Math.max(0, (a[campoVerde] || 0) - 1); n.textContent = "🟩 " + a[campoVerde];
-        guardar(); actualizarResumen();
-      });
-      vd.appendChild(n); vd.appendChild(bm); vd.appendChild(bp);
-      g.appendChild(vd);
+      g.appendChild(contador("aire", "✋ Aires", campoAire, "un aire"));
+      g.appendChild(contador("", "🟩 Verdes", campoVerde, "una tarjeta verde"));
       return g;
     }
 
@@ -1142,7 +1250,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
   }
 
   document.getElementById("borrarResultados").addEventListener("click", function(){
-    if(!confirm("¿Borrar todos los resultados y el juego limpio de la liga de " + estado.clase + "º?")) return;
+    if(!confirm("¿Borrar todos los resultados, aires y juego limpio de la liga de " + estado.clase + "º?")) return;
     clase().actas = {};
     guardar(); pintarCalendario(); actualizarResumen();
   });
@@ -1152,48 +1260,49 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     var n = nEq(), fx = FIXTURES[n];
     var fila = [];
     for(var i = 0; i < n; i++){
-      fila.push({ i:i, nombre:nombre(i), pj:0, g:0, e:0, p:0, gf:0, gc:0, pr:0, pl:0, verdes:0, h2h:{} });
+      fila.push({ i:i, nombre:nombre(i), pj:0, g:0, p:0, pf:0, pc:0, pr:0, lim:0, verdes:0, aires:0, h2h:{} });
     }
     fx.rondas.forEach(function(ronda, r){
       ronda.forEach(function(par, p){
         var a = clase().actas[claveActa(r, p)];
         if(!a) return;
         var l = par[0], v = par[1];
-        fila[l].pl += a.fl.filter(Boolean).length + (a.el ? 1 : 0);
-        fila[v].pl += a.fv.filter(Boolean).length + (a.ev ? 1 : 0);
+        fila[l].lim += a.fl.filter(Boolean).length + (a.el ? 1 : 0);
+        fila[v].lim += a.fv.filter(Boolean).length + (a.ev ? 1 : 0);
         fila[l].verdes += (a.vl || 0); fila[v].verdes += (a.vv || 0);
-        if(!jugado(a)) return;
+        fila[l].aires += (a.al || 0); fila[v].aires += (a.av || 0);
+        if(!decidido(a)) return;
         fila[l].pj++; fila[v].pj++;
-        fila[l].gf += a.gl; fila[l].gc += a.gv;
-        fila[v].gf += a.gv; fila[v].gc += a.gl;
-        var dif = a.gl - a.gv;
+        fila[l].pf += a.pl; fila[l].pc += a.pv;
+        fila[v].pf += a.pv; fila[v].pc += a.pl;
+        var dif = a.pl - a.pv;
         fila[l].h2h[v] = (fila[l].h2h[v] || 0) + dif;
         fila[v].h2h[l] = (fila[v].h2h[l] || 0) - dif;
         if(dif > 0){ fila[l].g++; fila[v].p++; fila[l].pr += 3; fila[v].pr += 1; }
-        else if(dif < 0){ fila[v].g++; fila[l].p++; fila[v].pr += 3; fila[l].pr += 1; }
-        else { fila[l].e++; fila[v].e++; fila[l].pr += 2; fila[v].pr += 2; }
+        else { fila[v].g++; fila[l].p++; fila[v].pr += 3; fila[l].pr += 1; }
       });
     });
-    fila.forEach(function(f){ f.total = f.pr + f.pl; });
+    fila.forEach(function(f){ f.total = f.pr + f.lim; });
     fila.sort(function(a, b){
       if(b.total !== a.total) return b.total - a.total;
-      if(b.pl !== a.pl) return b.pl - a.pl;
+      if(b.lim !== a.lim) return b.lim - a.lim;
       var d = a.h2h[b.i] || 0;
       if(d !== 0) return -d;
-      var da = a.gf - a.gc, db = b.gf - b.gc;
+      var da = a.pf - a.pc, db = b.pf - b.pc;
       if(db !== da) return db - da;
-      if(b.gf !== a.gf) return b.gf - a.gf;
+      if(b.pf !== a.pf) return b.pf - a.pf;
+      if(b.verdes !== a.verdes) return b.verdes - a.verdes;
       return a.i - b.i;
     });
     return fila;
   }
-  function hayDatos(fila){ return fila.some(function(f){ return f.pj > 0 || f.pl > 0 || f.verdes > 0; }); }
+  function hayDatos(fila){ return fila.some(function(f){ return f.pj > 0 || f.lim > 0 || f.verdes > 0 || f.aires > 0; }); }
 
   function pintarClasificacion(){
     var fila = calcular();
     var podio = document.getElementById("podioCard");
     if(!hayDatos(fila)){
-      podio.innerHTML = "<div class='vacio'><span class='em'>🏁</span>¡El podio se llena con el primer partido!<br><span class='note'>Apunta los goles y el juego limpio en «Partidos».</span></div>";
+      podio.innerHTML = "<div class='vacio'><span class='em'>🏁</span>¡El podio se llena con el primer partido!<br><span class='note'>Apunta las partidas, los aires y el juego limpio en «Partidos».</span></div>";
     } else {
       var orden = [[fila[1], "p2", "🥈"], [fila[0], "p1", "🥇"], [fila[2], "p3", "🥉"]];
       var h = "<div class='podio'>";
@@ -1220,32 +1329,37 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
         "<td>" + htmlEquipo(f.i) + (f.verdes ? "<div class='note'>🟩 " + f.verdes + " verde" + (f.verdes > 1 ? "s" : "") + "</div>" : "") + "</td>" +
         "<td class='num'>" + f.pj + "</td>" +
         "<td class='num' style='color:var(--win)'>" + f.g + "</td>" +
-        "<td class='num' style='color:var(--draw)'>" + f.e + "</td>" +
         "<td class='num' style='color:var(--loss)'>" + f.p + "</td>" +
-        "<td class='num'>" + f.gf + "</td>" +
-        "<td class='num'>" + f.gc + "</td>" +
+        "<td class='num'>" + f.pf + "</td>" +
+        "<td class='num'>" + f.pc + "</td>" +
+        "<td class='num'>" + f.aires + "</td>" +
         "<td class='num'>" + f.pr + "</td>" +
-        "<td class='num'>" + f.pl + "</td>" +
+        "<td class='num'>" + f.lim + "</td>" +
         "<td class='tot'>" + f.total + "</td>" +
         "<td><div class='barra'><i style='width:" + Math.round(100 * f.total / max) + "%'></i></div></td>";
       tb.appendChild(tr);
     });
   }
 
+  function mejorEn(fila, valor){
+    return fila.slice().sort(function(a, b){ return valor(b) - valor(a) || a.i - b.i; })[0];
+  }
   function pintarAhora(){
     var fila = calcular();
     var lider = document.getElementById("ahoraLider");
     var limpio = document.getElementById("ahoraLimpio");
+    var aires = document.getElementById("ahoraAires");
     if(!hayDatos(fila)){
       lider.innerHTML = "🤔 ¿Quién será el primero?";
       limpio.innerHTML = "🌱 ¡Todo por jugar!";
+      aires.innerHTML = "✋ ¿Quién atrapará más?";
       return;
     }
     lider.innerHTML = htmlEquipo(fila[0].i) + "<span class='note'>" + fila[0].total + " pts</span>";
-    var mejor = fila.slice().sort(function(a, b){
-      return (b.pl + b.verdes) - (a.pl + a.verdes) || a.i - b.i;
-    })[0];
-    limpio.innerHTML = htmlEquipo(mejor.i) + "<span class='note'>🤝 " + mejor.pl + " · 🟩 " + mejor.verdes + "</span>";
+    var ml = mejorEn(fila, function(f){ return f.lim + f.verdes; });
+    limpio.innerHTML = htmlEquipo(ml.i) + "<span class='note'>🤝 " + ml.lim + " · 🟩 " + ml.verdes + "</span>";
+    var ma = mejorEn(fila, function(f){ return f.aires; });
+    aires.innerHTML = ma.aires ? htmlEquipo(ma.i) + "<span class='note'>✋ " + ma.aires + " aires</span>" : "✋ ¿Quién atrapará más?";
   }
 
   function celebrarLider(){
@@ -1255,16 +1369,12 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 
   function actualizarResumen(){ pintarClasificacion(); pintarAhora(); }
 
-  /* ---------- cronómetro ---------- */
-  var FASES = [
-    { nombre:"1er tiempo", seg:360, cambio:180 },
-    { nombre:"Descanso",   seg:60,  cambio:0 },
-    { nombre:"2º tiempo",  seg:360, cambio:180 }
-  ];
-  var fase = 0, restante = FASES[0].seg, corriendo = false, intervalo = null, avisado = false;
+  /* ---------- cronómetro de partida ---------- */
+  var seg = 0, partida = 1, corriendo = false, intervalo = null, avisos = {};
   var elReloj = document.getElementById("reloj");
   var elFase = document.getElementById("fase");
-  var elAviso = document.getElementById("avisoCambio");
+  var elPartida = document.getElementById("numPartida");
+  var elAviso = document.getElementById("avisoCrono");
   var elBarra = document.getElementById("barraCrono");
   var btnStart = document.getElementById("btnStart");
   var txtStart = document.getElementById("txtStart");
@@ -1273,14 +1383,20 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     var m = Math.floor(s / 60), r = s % 60;
     return m + ":" + (r < 10 ? "0" : "") + r;
   }
+  function limite(){ return esBenjamin() ? 180 : 360; }
   function pintarReloj(){
-    elReloj.textContent = mmss(Math.max(0, restante));
-    elFase.textContent = FASES[fase].nombre;
-    elFase.classList.toggle("desc", fase === 1);
-    elBarra.style.width = (100 * Math.max(0, restante) / FASES[fase].seg) + "%";
+    elReloj.textContent = mmss(seg);
+    elPartida.textContent = "Partida " + partida;
+    var f = "campo", txt = "Campo entero";
+    if(seg >= 360 && !esBenjamin()){ f = "roja"; txt = "Línea roja"; }
+    else if(seg >= 180){ f = "blanca"; txt = esBenjamin() ? "Campo acortado" : "Línea blanca"; }
+    elFase.className = "fase " + f;
+    elFase.textContent = txt;
+    document.getElementById("marca3").textContent = esBenjamin() ? "3:00 ✂️" : "3:00 ⬜";
+    elBarra.style.width = Math.min(100, 100 * seg / limite()) + "%";
     btnStart.textContent = corriendo ? "⏸" : "▶";
     btnStart.setAttribute("aria-label", corriendo ? "Pausa" : "Empezar");
-    txtStart.textContent = corriendo ? "Pausa" : "Empezar";
+    txtStart.textContent = corriendo ? "Pausa" : "¡Datchball!";
   }
   function aviso(texto, grita){
     elAviso.textContent = texto;
@@ -1302,53 +1418,71 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     }catch(e){}
   }
   function tick(){
-    restante--;
-    if(!avisado && FASES[fase].cambio && restante === FASES[fase].cambio){
-      avisado = true;
-      aviso("🔄 ¡CAMBIO! Entran los suplentes", true);
+    seg++;
+    if(seg === 180 && !avisos[180]){
+      avisos[180] = true;
+      aviso(esBenjamin() ? "✂️ ¡ACORTE! Cuando un equipo tenga 2 pelotas y el otro 1" : "⬜ ¡LÍNEA BLANCA! Acortad cuando un equipo tenga 2 pelotas y el otro 1", true);
       pitido(660, .25); setTimeout(function(){ pitido(660, .25); }, 300);
     }
-    if(restante <= 0){
-      pitido(440, .7);
-      siguienteFase();
+    if(seg === 360 && !esBenjamin() && !avisos[360]){
+      avisos[360] = true;
+      aviso("🟥 ¡LÍNEA ROJA! Segundo acorte del campo", true);
+      pitido(520, .25); setTimeout(function(){ pitido(520, .25); }, 300); setTimeout(function(){ pitido(520, .25); }, 600);
     }
     pintarReloj();
-  }
-  function siguienteFase(){
-    if(fase < FASES.length - 1){
-      fase++; restante = FASES[fase].seg; avisado = false;
-      aviso(fase === 1 ? "🫶 Descanso: cambio de portero y minuto de equipo" : "🏐 ¡Segundo tiempo! Aviso de cambio a mitad", false);
-    } else {
-      pararReloj();
-      restante = 0;
-      aviso("🏁 ¡FINAL DEL PARTIDO! A apuntar el juego limpio", true);
-      lluvia();
-    }
   }
   function pararReloj(){
     corriendo = false;
     if(intervalo){ clearInterval(intervalo); intervalo = null; }
   }
   btnStart.addEventListener("click", function(){
-    if(corriendo){ pararReloj(); }
+    if(corriendo){ pararReloj(); aviso("⏸ Pausa", false); }
     else {
-      if(restante <= 0 && fase === FASES.length - 1){ fase = 0; restante = FASES[0].seg; avisado = false; }
       corriendo = true;
       intervalo = setInterval(tick, 1000);
+      if(seg === 0){ aviso("📣 ¡DATCHBALL! ¡A por las pelotas!", true); pitido(880, .4); }
+      else aviso("▶ Seguimos", false);
     }
     pintarReloj();
   });
   document.getElementById("btnReset").addEventListener("click", function(){
-    pararReloj(); fase = 0; restante = FASES[0].seg; avisado = false;
-    aviso("Aviso de cambio a mitad de cada tiempo.", false);
+    pararReloj(); seg = 0; partida = 1; avisos = {};
+    aviso("Pulsa ▶ cuando el árbitro grite «¡Datchball!».", false);
     pintarReloj();
   });
-  document.getElementById("btnSalto").addEventListener("click", function(){
-    avisado = false;
-    if(fase < FASES.length - 1){ fase++; restante = FASES[fase].seg; }
-    else { pararReloj(); fase = 0; restante = FASES[0].seg; }
-    aviso(fase === 1 ? "🫶 Descanso: cambio de portero y minuto de equipo" : "Aviso de cambio a mitad de cada tiempo.", false);
+  document.getElementById("btnNueva").addEventListener("click", function(e){
+    pararReloj();
+    var duro = seg;
+    seg = 0; partida++; avisos = {};
+    aviso("🏁 ¡Fin de la partida" + (duro ? " (" + mmss(duro) + ")" : "") + "! Cambio de campo y a tocar la pared del fondo", true);
     pintarReloj();
+    confetiEn(e.currentTarget, 40);
+  });
+
+  /* ---------- cuenta atrás de 10 ---------- */
+  var num10 = document.getElementById("num10");
+  var btnCuenta = document.getElementById("btnCuenta");
+  var cuenta = 10, intCuenta = null;
+  function pararCuenta(){ if(intCuenta){ clearInterval(intCuenta); intCuenta = null; } }
+  btnCuenta.addEventListener("click", function(){
+    if(intCuenta){
+      pararCuenta(); cuenta = 10; num10.textContent = "10"; num10.classList.remove("fin");
+      btnCuenta.textContent = "▶ Contar";
+      return;
+    }
+    cuenta = 10; num10.textContent = "10"; num10.classList.remove("fin");
+    btnCuenta.textContent = "✋ ¡Ha lanzado!";
+    intCuenta = setInterval(function(){
+      cuenta--;
+      num10.textContent = cuenta;
+      if(cuenta <= 5 && cuenta > 0) pitido(740, .15);
+      if(cuenta <= 0){
+        pararCuenta();
+        num10.textContent = "0"; num10.classList.add("fin");
+        pitido(330, .7);
+        btnCuenta.textContent = "▶ Contar";
+      }
+    }, 1000);
   });
 
   /* ---------- copia de seguridad ---------- */
@@ -1356,7 +1490,7 @@ footer .botones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
     var blob = new Blob([JSON.stringify(estado, null, 2)], {type:"application/json"});
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
-    a.href = url; a.download = "torneo-colpbol.json";
+    a.href = url; a.download = "torneo-datchball.json";
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
   });
