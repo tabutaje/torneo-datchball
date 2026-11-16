@@ -363,7 +363,7 @@ td.tot{font:800 1.15rem var(--title);text-align:center}
 .apil{display:flex;height:14px;border-radius:99px;overflow:hidden;background:var(--panel2);border:1px solid var(--line)}
 .apil i{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.2,.7,.2,1) .2s}
 .in .apil i{width:var(--w,0%)}
-.c0{background:#38bdf8}.c1{background:#34d399}.c2{background:#a78bfa}.c3{background:#fbbf24}
+.c0{background:#38bdf8}.c1{background:#34d399}.c2{background:#a78bfa}.c3{background:#fbbf24}.c4{background:#166534}
 .leyenda{display:flex;flex-wrap:wrap;gap:6px 16px;font:700 .86rem "Nunito",sans-serif;color:var(--muted);margin-top:12px}
 .leyenda span{display:inline-flex;align-items:center;gap:6px}
 .leyenda i{width:12px;height:12px;border-radius:4px;display:inline-block}
@@ -666,6 +666,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
             <li><b>💪 Cooperación:</b> lanzan todos y se animan desde el banco.</li>
           </ul>
           <p><b>⭐ Punto extra (+1):</b> para el equipo de servicio que arbitra y anota bien, o para los dos equipos si el autoarbitraje sale sin discusiones.</p>
+          <p><b>🟩 Tarjetas verdes:</b> cada una suma 1 punto para el premio al juego limpio de tu equipo. No cambian la clasificación de la liga.</p>
           <p class="note"><b>Si hay empate en la clasificación</b> gana quien tenga más puntos de juego limpio. Si sigue el empate: el resultado entre los dos equipos, después la diferencia de partidas ganadas y perdidas, las partidas ganadas y las tarjetas verdes.</p>
         </div>
       </div>
@@ -744,7 +745,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           <div class="stack">
             <div class="card rv">
               <h3>🃏 Tarjetas</h3>
-              <div class="tarj verde" style="margin-bottom:14px"><i></i><div><b>Verde, de juego limpio</b>Por reconocer que te han dado sin que el árbitro lo viera, tratar con deportividad al rival o aceptar la derrota con buena cara. Cuenta para el premio al juego limpio.</div></div>
+              <div class="tarj verde" style="margin-bottom:14px"><i></i><div><b>Verde, de juego limpio</b>Por reconocer que te han dado sin que el árbitro lo viera, tratar con deportividad al rival o aceptar la derrota con buena cara. Cada verde suma 1 punto para el premio al juego limpio de tu equipo.</div></div>
               <div class="tarj azul"><i></i><div><b>Azul, de reflexión</b>Por protestar, insultar o empujar. Sales 1 minuto al rincón de la calma, haces el semáforo y vuelves. Tu equipo pierde el punto de respeto de ese partido.</div></div>
             </div>
             <div class="card rv">
@@ -1018,7 +1019,7 @@ function calcular(c){
     L.h2h[m.v] = (L.h2h[m.v] || 0) + dif; V.h2h[m.l] = (V.h2h[m.l] || 0) - dif;
     if(dif > 0){ L.g++; V.p++; L.pr += 3; V.pr += 1; } else { V.g++; L.p++; V.pr += 3; L.pr += 1; }
   });
-  f.forEach(x => { const d = dojoEquipo(c, x.i); x.aires += d.aires; x.pts = d.pts; x.total = x.pr + x.lim; });
+  f.forEach(x => { const d = dojoEquipo(c, x.i); x.aires += d.aires; x.pts = d.pts; x.total = x.pr + x.lim; x.limp = x.limAll + x.verdes; });
   f.sort((a, b) => (b.total - a.total) || (b.lim - a.lim) || -(a.h2h[b.i] || 0) || ((b.pf - b.pc) - (a.pf - a.pc)) || (b.pf - a.pf) || (b.verdes - a.verdes) || (a.i - b.i));
   return f;
 }
@@ -1303,7 +1304,7 @@ function htmlResumen(c){
   const js = statsJugadores(c);
   const mejor = (arr, k) => arr.filter(x => x[k] > 0).sort((a, b) => b[k] - a[k])[0];
   const estrella = mejor(js, "pts"), rey = mejor(js, "a"), valores = mejor(js, "v"), punteria = mejor(js, "e");
-  const limpio = f.slice().sort((a, b) => (b.limAll + b.verdes) - (a.limAll + a.verdes) || a.i - b.i)[0];
+  const limpio = f.slice().sort((a, b) => b.limp - a.limp || b.limAll - a.limAll || a.i - b.i)[0];
   const airesEq = f.slice().sort((a, b) => b.aires - a.aires || a.i - b.i)[0];
   const jugador = (x, txt) => `<b>${esc(x.n)}</b><span class="note"> · ${esc(nom(c, x.t))} · ${txt}</span>`;
 
@@ -1323,7 +1324,7 @@ function htmlResumen(c){
       ${estrella ? `<div class="dest"><span class="ic">⭐</span><div><small>Más puntos</small>${jugador(estrella, estrella.pts + " puntos")}</div></div>` : ""}
       <div class="dest"><span class="ic">✋</span><div><small>Reyes del aire</small>${rey ? jugador(rey, rey.a + " aires") : airesEq.aires ? `<b>${esc(nom(c, airesEq.i))}</b><span class="note"> · ${airesEq.aires} aires</span>` : `<span class="muted">¿Quién atrapará más?</span>`}</div></div>
       <div class="dest"><span class="ic">🟩</span><div><small>Jugador o jugadora en valores</small>${valores ? jugador(valores, valores.v + " verdes") : `<span class="muted">A por la primera tarjeta verde</span>`}</div></div>
-      <div class="dest"><span class="ic">🤝</span><div><small>Equipo más limpio</small>${limpio.limAll + limpio.verdes ? `<b>${esc(nom(c, limpio.i))}</b><span class="note"> · ${limpio.limAll} puntos · ${limpio.verdes} verdes</span>` : `<span class="muted">¡Todo por jugar!</span>`}</div></div>
+      <div class="dest"><span class="ic">🤝</span><div><small>Equipo más limpio</small>${limpio.limp ? `<b>${esc(nom(c, limpio.i))}</b><span class="note"> · ${limpio.limp} puntos de juego limpio</span>` : `<span class="muted">¡Todo por jugar!</span>`}</div></div>
       ${punteria ? `<div class="dest"><span class="ic">🎯</span><div><small>Mejor puntería</small>${jugador(punteria, punteria.e + " eliminaciones")}</div></div>` : ""}
     </div>
   </div>`;
@@ -1342,7 +1343,7 @@ function htmlClasificacion(c){
     <p class="note" style="margin-top:12px">PJ: partidos jugados · G, P: ganados y perdidos · PF, PC: partidas a favor y en contra · 🏆 puntos por resultado (ganar 3, perder 1) · 🤝 puntos de juego limpio. Si hay empate, gana quien tenga más juego limpio.</p></div>
     <div class="card rv"><h3>Premios de la gran final</h3><div class="premios">
       <div class="premio"><span class="em">🏆</span><div><b>Campeón de la liga</b><span>El ganador de la gran final.</span></div></div>
-      <div class="premio"><span class="em">🌟</span><div><b>Premio al juego limpio</b><span>Más puntos de juego limpio y tarjetas verdes.</span></div></div>
+      <div class="premio"><span class="em">🌟</span><div><b>Premio al juego limpio</b><span>Puntos de juego limpio de los partidos más 1 por cada tarjeta verde.</span></div></div>
       <div class="premio"><span class="em">✋</span><div><b>Reyes del aire</b><span>El equipo que más compañeros ha salvado.</span></div></div>
       <div class="premio"><span class="em">🤝</span><div><b>Mejor equipo</b><span>Lo votáis vosotros: el que mejor ha cooperado.</span></div></div>
     </div></div></div>`;
@@ -1377,17 +1378,18 @@ function htmlJugadores(c){
 
 /* ---------- liga: juego limpio ---------- */
 function htmlLimpio(c){
-  const f = calcular(c).slice().sort((a, b) => b.limAll - a.limAll || b.verdes - a.verdes || a.i - b.i);
-  const max = Math.max(1, ...f.map(x => x.limAll)), js = statsJugadores(c);
-  return `<p class="lb-intro">En cada partido el árbitro da hasta 3 puntos de juego limpio a cada equipo, y un punto extra si arbitran bien o el autoarbitraje sale sin discusiones. Aquí se cuentan también los de la gran final.</p>
+  const f = calcular(c).slice().sort((a, b) => b.limp - a.limp || b.limAll - a.limAll || a.i - b.i);
+  const max = Math.max(1, ...f.map(x => x.limp)), js = statsJugadores(c);
+  return `<p class="lb-intro">En cada partido el árbitro da hasta 3 puntos de juego limpio a cada equipo, y un punto extra si arbitran bien o el autoarbitraje sale sin discusiones. Además, cada tarjeta verde suma 1 punto. Aquí se cuentan también los de la gran final. Estos puntos deciden el premio al juego limpio.</p>
     <div class="grid g2">
       <div class="card rv"><h3>Ranking de juego limpio</h3>
-        ${f.map(x => `<div class="lim-row"><div class="lim-cab">${eq(c, x.i)}<span class="val"><span data-count="${x.limAll}">${x.limAll}</span><small>pts · 🟩 ${x.verdes}</small></span></div>
-          <div class="apil">${x.crit.map((v, k) => `<i class="c${k}" style="--w:${100 * v / max}%"></i>`).join("")}<i class="c3" style="--w:${100 * x.extra / max}%"></i></div></div>`).join("")}
-        <div class="leyenda"><span><i class="c0"></i>Respeto</span><span><i class="c1"></i>Honestidad</span><span><i class="c2"></i>Cooperación</span><span><i class="c3"></i>Extra</span></div>
+        ${f.map(x => `<div class="lim-row"><div class="lim-cab">${eq(c, x.i)}<span class="val"><span data-count="${x.limp}">${x.limp}</span><small>pts</small></span></div>
+          <div class="apil">${x.crit.map((v, k) => `<i class="c${k}" style="--w:${100 * v / max}%"></i>`).join("")}<i class="c3" style="--w:${100 * x.extra / max}%"></i><i class="c4" style="--w:${100 * x.verdes / max}%"></i></div>
+          <div class="note">🤝 ${x.limAll} de los partidos · 🟩 ${x.verdes} por tarjetas verdes</div></div>`).join("")}
+        <div class="leyenda"><span><i class="c0"></i>Respeto</span><span><i class="c1"></i>Honestidad</span><span><i class="c2"></i>Cooperación</span><span><i class="c3"></i>Extra</span><span><i class="c4"></i>Tarjetas verdes</span></div>
       </div>
       <div class="stack">
-        <div class="card rv" style="--i:1"><h3>🟩 Jugadores en valores</h3>${js.length ? htmlTop(c, js, "v", "Aún no hay tarjetas verdes. Se ganan por reconocer que te han dado, tratar bien al rival o aceptar la derrota con deportividad.") : `<p class="muted">Añade jugadores en «Equipos» para apuntar sus tarjetas verdes.</p>`}</div>
+        <div class="card rv" style="--i:1"><h3>🟩 Jugadores en valores</h3>${js.length ? htmlTop(c, js, "v", "Aún no hay tarjetas verdes. Se ganan por reconocer que te han dado, tratar bien al rival o aceptar la derrota con deportividad. Cada una suma 1 punto de juego limpio a tu equipo.") : `<p class="muted">Añade jugadores en «Equipos» para apuntar sus tarjetas verdes.</p>`}</div>
         <div class="card rv" style="--i:2"><h3>Los tres puntos</h3>
           <div class="dest"><span class="ic">🤝</span><div><b>Respeto</b><span class="note"> · saludo, sin burlas ni protestas, y os felicitáis al acabar.</span></div></div>
           <div class="dest"><span class="ic">🙋</span><div><b>Honestidad</b><span class="note"> · reconocen cuando les dan, levantando la mano.</span></div></div>
