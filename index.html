@@ -368,6 +368,49 @@ td.tot{font:800 1.15rem var(--title);text-align:center}
 .leyenda span{display:inline-flex;align-items:center;gap:6px}
 .leyenda i{width:12px;height:12px;border-radius:4px;display:inline-block}
 
+/* ---------- puntos de los jugadores ---------- */
+.dj-eq{margin-top:24px}
+.dj-eq-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.dj-eq-h .eq{font-size:1.15rem}
+.dj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.dj{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 8px 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;min-width:0}
+.dj:hover{transform:translateY(-4px);box-shadow:var(--shadow2)}
+.dj-av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-size:2rem;line-height:1;background:var(--panel2);background:color-mix(in srgb,var(--tc,#999) 18%,var(--panel));border:2.5px solid var(--tc,#999);flex:0 0 auto}
+.dj b{font:700 .92rem/1.15 var(--title);overflow-wrap:anywhere;text-align:center}
+.dj-pt{position:absolute;top:6px;right:6px;min-width:26px;height:26px;padding:0 7px;border-radius:99px;display:grid;place-items:center;font:800 .85rem var(--title);background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+.dj-pt.pos{background:#15803d;border-color:#15803d;color:#fff}
+.dj-pt.neg{background:#dc2626;border-color:#dc2626;color:#fff}
+.dj.todo{border-style:dashed;background:var(--panel2);box-shadow:none}
+.dj.sube{animation:djsube .5s ease-out}
+.dj.baja{animation:djbaja .45s ease-out}
+@keyframes djsube{40%{transform:scale(1.13) rotate(-3deg)}}
+@keyframes djbaja{25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
+.dj-fly{position:absolute;top:0;left:50%;font:800 1.6rem var(--title);color:#16a34a;animation:djfly .95s ease-out forwards;pointer-events:none;text-shadow:0 2px 0 var(--panel)}
+.dj-fly.neg{color:#dc2626}
+@keyframes djfly{from{transform:translate(-50%,14px);opacity:0}20%{opacity:1}to{transform:translate(-50%,-48px);opacity:0}}
+.dj-cab{display:flex;align-items:center;gap:14px}
+.dj-cab .tot{font:800 1.7rem/1 var(--title)}
+.dj-cab .tot small{font:700 .85rem "Nunito",sans-serif;color:var(--muted);margin-left:4px}
+.chips-d{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips-d span{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:.86rem}
+.dj-h{font:700 .78rem var(--title);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:16px 0 8px}
+.dj-skills{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px}
+.dj-skill{background:var(--panel2);border:1.5px solid var(--line);border-radius:14px;padding:10px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .1s,border-color .1s}
+.dj-skill span{font-size:1.7rem;line-height:1.25}
+.dj-skill b{font:700 .88rem/1.15 var(--title);text-align:center}
+.dj-skill small{font:800 .82rem var(--title);color:var(--ok)}
+.dj-skill.neg small{color:var(--bad)}
+.dj-skill:hover{border-color:var(--brand);transform:translateY(-2px)}
+.dj-skill:active{transform:scale(.95)}
+.dj-log .dj-e{font-size:1.3rem;line-height:1}
+.mas1,.menos1{font:800 1rem var(--title)}
+.mas1{color:var(--ok)}.menos1{color:var(--bad)}
+.dj-x{width:24px;height:24px;border-radius:50%;border:0;background:var(--line);cursor:pointer;font-weight:800;color:var(--ink);flex:0 0 auto}
+#toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,160%);background:#161a2e;color:#fff;border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:8px 8px 8px 18px;display:flex;align-items:center;gap:12px;font:700 .95rem var(--title);box-shadow:var(--shadow2);z-index:90;transition:transform .3s cubic-bezier(.2,.9,.3,1.2);max-width:92vw}
+#toast.on{transform:translate(-50%,0)}
+#toast button{border:0;border-radius:999px;background:#fbbf24;color:#161a2e;font:700 .88rem var(--title);padding:6px 12px;cursor:pointer;flex:0 0 auto}
+html.js .rv.ya{transition:none}
+
 /* ---------- reglas y valores ---------- */
 .phead{background:linear-gradient(135deg,#1e1b4b,#4338ca 60%,#7c3aed);color:#fff;padding:34px 0 30px}
 .phead h1{font-size:clamp(1.9rem,6.5vw,2.8rem);font-weight:800}
@@ -478,7 +521,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
         <div>
           <span class="chip">4º · 5º · 6º de Primaria</span>
           <h1>Torneo de <em>datchball</em></h1>
-          <p>Esquiva, atrapa y salva a tu equipo. Cada curso juega su propia liga y aquí se apunta todo: resultados, clasificación, mejores jugadores y juego limpio.</p>
+          <p>Esquiva, atrapa y salva a tu equipo. Cada curso juega su propia liga y aquí se apunta todo: resultados, clasificación, puntos de cada jugador y juego limpio.</p>
           <div class="btns">
             <button class="btn luz" type="button" data-act="scroll" data-to="ligas">Elige tu liga ↓</button>
             <a class="btn cristal" href="#/reglas">Aprender las reglas</a>
@@ -751,6 +794,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
             <li>Entra en la liga del curso (4º, 5º o 6º) y pulsa <b>Editar resultados</b>.</li>
             <li>En <b>Equipos</b>, pon nombres, mascotas y jugadores. Puedes repartir la clase al azar.</li>
             <li>En <b>Partidos</b>, apunta las partidas ganadas, el juego limpio y, si quieres, los aires, eliminaciones y tarjetas verdes de cada jugador.</li>
+            <li>En <b>Puntos</b>, toca a un jugador para darle puntos por aire, juego limpio, compañerismo, esfuerzo…</li>
             <li><b>Clasificación</b>, <b>Jugadores</b> y <b>Juego limpio</b> se calculan solos.</li>
             <li>Al terminar la liga, crea la <b>gran final</b> desde Partidos.</li>
           </ol>
@@ -799,6 +843,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
 
 <footer><div class="wrap">Torneo de datchball · 4º, 5º y 6º de Primaria · Los datos se guardan en este dispositivo</div></footer>
 
+<div id="toast" role="status" aria-live="polite"></div>
+
 <dialog id="dlg"><div class="dlg-in"><h3 id="dlgT"></h3><div id="dlgB"></div><div class="dlg-btns" id="dlgBtns"></div></div></dialog>
 
 <script>
@@ -817,13 +863,27 @@ const CUR = {
   "5": { col:"#4338ca", col2:"#7c3aed", cat:"alevín" },
   "6": { col:"#b02a5b", col2:"#e0457b", cat:"alevín" }
 };
-const SUBS = [["resumen","Resumen"],["partidos","Partidos"],["clasificacion","Clasificación"],["jugadores","Jugadores"],["juego-limpio","Juego limpio"],["equipos","Equipos"]];
+const SUBS = [["resumen","Resumen"],["partidos","Partidos"],["clasificacion","Clasificación"],["jugadores","Jugadores"],["puntos","Puntos"],["juego-limpio","Juego limpio"],["equipos","Equipos"]];
 const CRIT = [["🤝","Respeto"],["🙋","Honestidad"],["💪","Cooperación"]];
 const FIXTURES = {
   4: { rondas: [[[0,1],[2,3]],[[0,2],[1,3]],[[0,3],[1,2]],[[1,0],[3,2]],[[2,0],[3,1]],[[3,0],[2,1]]], servicio: null },
   5: { rondas: [[[1,4],[2,3]],[[0,4],[1,2]],[[0,3],[2,4]],[[0,2],[1,3]],[[0,1],[3,4]]], servicio: [0,3,1,4,2] }
 };
 const STORE = "datchball-torneo-v1";
+const DOJO = [
+  { k:"aire",   e:"✋", n:"Aire",              d:1 },
+  { k:"limpio", e:"🤝", n:"Juego limpio",      d:1 },
+  { k:"comp",   e:"🫶", n:"Compañerismo",      d:1 },
+  { k:"hon",    e:"🙋", n:"Honestidad",        d:1 },
+  { k:"esf",    e:"💪", n:"Esfuerzo",          d:1 },
+  { k:"animo",  e:"📣", n:"Ánimo",             d:1 },
+  { k:"rol",    e:"🧢", n:"Cumple su rol",     d:1 },
+  { k:"paz",    e:"🕊️", n:"Resuelve hablando", d:1 },
+  { k:"prot",   e:"😤", n:"Protestar",          d:-1 },
+  { k:"resp",   e:"🟦", n:"Falta de respeto",   d:-1 },
+  { k:"solo",   e:"🙈", n:"No pasar la pelota", d:-1 }
+];
+const AVATARES = ["🐵","🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🐮","🐷","🐸","🐙","🦄","🐲","🐳","🦉","🐝","🦋","🐢","🐧","🦒"];
 const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]);
@@ -848,6 +908,7 @@ function normClase(c, nViejo){
   c = c && typeof c === "object" ? c : {};
   const o = { n: c.n ? (c.n === 5 ? 5 : 4) : (nViejo === 5 ? 5 : 4), nombres:[], mascotas:[], jugadores:[], actas:{}, final:null,
               alumnos: typeof c.alumnos === "string" ? c.alumnos.slice(0, 4000) : "" };
+  o.dojo = normDojo(c.dojo);
   for(let i = 0; i < 5; i++){
     const nm = c.nombres && typeof c.nombres[i] === "string" ? c.nombres[i].slice(0, 28) : "";
     o.nombres.push(nm || "Equipo " + LETRAS[i]);
@@ -957,14 +1018,14 @@ function calcular(c){
     L.h2h[m.v] = (L.h2h[m.v] || 0) + dif; V.h2h[m.l] = (V.h2h[m.l] || 0) - dif;
     if(dif > 0){ L.g++; V.p++; L.pr += 3; V.pr += 1; } else { V.g++; L.p++; V.pr += 3; L.pr += 1; }
   });
-  f.forEach(x => { x.total = x.pr + x.lim; });
+  f.forEach(x => { const d = dojoEquipo(c, x.i); x.aires += d.aires; x.pts = d.pts; x.total = x.pr + x.lim; });
   f.sort((a, b) => (b.total - a.total) || (b.lim - a.lim) || -(a.h2h[b.i] || 0) || ((b.pf - b.pc) - (a.pf - a.pc)) || (b.pf - a.pf) || (b.verdes - a.verdes) || (a.i - b.i));
   return f;
 }
 const hayDatos = f => f.some(x => x.pj > 0 || x.limAll > 0 || x.verdes > 0 || x.aires > 0 || x.elim > 0);
 function statsJugadores(c){
   const cl = C(c), map = {}, out = [];
-  for(let i = 0; i < cl.n; i++) cl.jugadores[i].forEach(j => { const o = { id:j.id, n:j.n, t:i, a:0, e:0, v:0 }; map[j.id] = o; out.push(o); });
+  for(let i = 0; i < cl.n; i++) cl.jugadores[i].forEach(j => { const o = { id:j.id, n:j.n, t:i, a:(cl.dojo.p[j.id] || {}).aire || 0, e:0, v:0, pts:ptsJug(c, j.id) }; map[j.id] = o; out.push(o); });
   todos(c).forEach(m => {
     const a = leer(c, m);
     [m.l, m.v].forEach(t => cl.jugadores[t].forEach(j => { const s = a.jug[j.id]; if(s){ map[j.id].a += s.a; map[j.id].e += s.e; map[j.id].v += s.v; } }));
@@ -1117,7 +1178,7 @@ function htmlKpis(c){
 }
 function renderLiga(){
   const c = R.curso, cl = C(c), ed = estado.editar;
-  const cuerpo = ({ resumen:htmlResumen, partidos:htmlPartidos, clasificacion:htmlClasificacion, jugadores:htmlJugadores, "juego-limpio":htmlLimpio, equipos:htmlEquipos })[R.sub](c);
+  const cuerpo = ({ resumen:htmlResumen, partidos:htmlPartidos, clasificacion:htmlClasificacion, jugadores:htmlJugadores, puntos:htmlPuntos, "juego-limpio":htmlLimpio, equipos:htmlEquipos })[R.sub](c);
   $("#liga").style.cssText = `--lc:${CUR[c].col};--lc2:${CUR[c].col2}`;
   $("#liga").innerHTML = `
     <div class="lh"><div class="wrap">
@@ -1241,7 +1302,7 @@ function htmlResumen(c){
   const ult = ls.filter(m => decidido(leer(c, m))).reverse().slice(0, 4);
   const js = statsJugadores(c);
   const mejor = (arr, k) => arr.filter(x => x[k] > 0).sort((a, b) => b[k] - a[k])[0];
-  const rey = mejor(js, "a"), valores = mejor(js, "v"), punteria = mejor(js, "e");
+  const estrella = mejor(js, "pts"), rey = mejor(js, "a"), valores = mejor(js, "v"), punteria = mejor(js, "e");
   const limpio = f.slice().sort((a, b) => (b.limAll + b.verdes) - (a.limAll + a.verdes) || a.i - b.i)[0];
   const airesEq = f.slice().sort((a, b) => b.aires - a.aires || a.i - b.i)[0];
   const jugador = (x, txt) => `<b>${esc(x.n)}</b><span class="note"> · ${esc(nom(c, x.t))} · ${txt}</span>`;
@@ -1259,6 +1320,7 @@ function htmlResumen(c){
       ${ult.length ? `<ul class="lista">${ult.map(m => { const a = leer(c, m); return `<li><div class="duelo">${eq(c, m.l)}<span class="r">${a.pl} : ${a.pv}</span>${eq(c, m.v)}</div></li>`; }).join("")}</ul>` : `<p class="muted">Todavía no hay partidos jugados.</p>`}
     </div>
     <div class="card rv" style="--i:1"><div class="sec-h" style="margin-bottom:0"><h3 style="margin:0">Destacados</h3><a class="mas-link" href="${enlaceLiga(c, "jugadores")}">Ver jugadores →</a></div>
+      ${estrella ? `<div class="dest"><span class="ic">⭐</span><div><small>Más puntos</small>${jugador(estrella, estrella.pts + " puntos")}</div></div>` : ""}
       <div class="dest"><span class="ic">✋</span><div><small>Reyes del aire</small>${rey ? jugador(rey, rey.a + " aires") : airesEq.aires ? `<b>${esc(nom(c, airesEq.i))}</b><span class="note"> · ${airesEq.aires} aires</span>` : `<span class="muted">¿Quién atrapará más?</span>`}</div></div>
       <div class="dest"><span class="ic">🟩</span><div><small>Jugador o jugadora en valores</small>${valores ? jugador(valores, valores.v + " verdes") : `<span class="muted">A por la primera tarjeta verde</span>`}</div></div>
       <div class="dest"><span class="ic">🤝</span><div><small>Equipo más limpio</small>${limpio.limAll + limpio.verdes ? `<b>${esc(nom(c, limpio.i))}</b><span class="note"> · ${limpio.limAll} puntos · ${limpio.verdes} verdes</span>` : `<span class="muted">¡Todo por jugar!</span>`}</div></div>
@@ -1300,15 +1362,16 @@ function htmlJugadores(c){
       <a class="btn" href="${enlaceLiga(c, "equipos")}">Ir a Equipos</a></div>`;
   }
   const orden = js.slice().sort((a, b) => a.t - b.t || a.n.localeCompare(b.n, "es"));
-  return `<p class="lb-intro">Los cinco mejores de cada categoría. Se apuntan en cada partido, en modo edición.</p>
-    <div class="grid g3">
+  return `<p class="lb-intro">Los cinco mejores de cada categoría. Los puntos se dan en «Puntos» y el resto se apunta en cada partido, en modo edición.</p>
+    <div class="grid g2">
+      <div class="card rv"><h3>⭐ Más puntos</h3>${htmlTop(c, js, "pts", "Aún no se han dado puntos. Se dan en «Puntos».")}</div>
       <div class="card rv"><h3>✋ Reyes del aire</h3>${htmlTop(c, js, "a", "Nadie ha atrapado aún. ¡A por el primer aire!")}</div>
       <div class="card rv" style="--i:1"><h3>🟩 Jugadores en valores</h3>${htmlTop(c, js, "v", "Aún no hay tarjetas verdes. ¡Juega limpio!")}</div>
       <div class="card rv" style="--i:2"><h3>🎯 Mejor puntería</h3>${htmlTop(c, js, "e", "Aún no hay eliminaciones apuntadas.")}</div>
     </div>
     <div class="card rv" style="margin-top:16px"><h3>Todos los jugadores</h3><div class="scroll"><table>
-      <thead><tr><th>Jugador</th><th>Equipo</th><th class="num">✋ Aires</th><th class="num">🎯 Elim.</th><th class="num">🟩 Verdes</th></tr></thead>
-      <tbody>${orden.map(x => `<tr><td><b>${esc(x.n)}</b></td><td>${eq(c, x.t)}</td><td class="num">${x.a}</td><td class="num">${x.e}</td><td class="num">${x.v}</td></tr>`).join("")}</tbody>
+      <thead><tr><th>Jugador</th><th>Equipo</th><th class="num">✋ Aires</th><th class="num">🎯 Elim.</th><th class="num">🟩 Verdes</th><th class="num">⭐ Puntos</th></tr></thead>
+      <tbody>${orden.map(x => `<tr><td><b>${esc(x.n)}</b></td><td>${eq(c, x.t)}</td><td class="num">${x.a}</td><td class="num">${x.e}</td><td class="num">${x.v}</td><td class="num"><b>${x.pts}</b></td></tr>`).join("")}</tbody>
     </table></div></div>`;
 }
 
@@ -1332,6 +1395,106 @@ function htmlLimpio(c){
         </div>
       </div>
     </div>`;
+}
+
+/* ---------- liga: puntos de los jugadores ---------- */
+function normDojo(d){
+  const o = { p:{}, log:[] }, idOk = x => /^[a-z0-9]{1,12}$/.test(x);
+  if(!d || typeof d !== "object") return o;
+  if(d.p && typeof d.p === "object") Object.keys(d.p).slice(0, 100).forEach(id => {
+    if(!idOk(id)) return;
+    const src = d.p[id] || {}, x = {};
+    DOJO.forEach(k => { const n = num(src[k.k], 999); if(n) x[k.k] = n; });
+    o.p[id] = x;
+  });
+  if(Array.isArray(d.log)) d.log.slice(-60).forEach(e => {
+    if(e && idOk(e.pid) && DOJO.some(k => k.k === e.k)) o.log.push({ id: idOk(e.id) ? e.id : uid(), g: idOk(e.g) ? e.g : "", t: +e.t || 0, pid: e.pid, k: e.k });
+  });
+  return o;
+}
+const avatar = id => AVATARES[[...id].reduce((s, ch) => s + ch.charCodeAt(0), 0) % AVATARES.length];
+function ptsJug(c, pid){ const p = C(c).dojo.p[pid]; return p ? DOJO.reduce((s, k) => s + (p[k.k] || 0) * k.d, 0) : 0; }
+function dojoEquipo(c, t){
+  const cl = C(c); let pts = 0, aires = 0;
+  cl.jugadores[t].forEach(j => { pts += ptsJug(c, j.id); aires += (cl.dojo.p[j.id] || {}).aire || 0; });
+  return { pts, aires };
+}
+function htmlPuntosCuerpo(c){
+  const cl = C(c), ed = estado.editar, nombres = {}, eqs = [];
+  for(let i = 0; i < cl.n; i++){ eqs.push({ i, pts: dojoEquipo(c, i).pts }); cl.jugadores[i].forEach(j => { nombres[j.id] = j.n; }); }
+  const orden = eqs.slice().sort((a, b) => b.pts - a.pts || a.i - b.i), max = Math.max(1, ...eqs.map(x => x.pts));
+  const log = cl.dojo.log.filter(e => nombres[e.pid]).slice(-12).reverse();
+  const tile = (j, t) => { const p = ptsJug(c, j.id); return `<button type="button" class="dj" data-act="abrirDar" data-pid="${j.id}" style="--tc:${COLORES[t]}"><span class="dj-av">${avatar(j.id)}</span><b>${esc(j.n)}</b><span class="dj-pt${p > 0 ? " pos" : p < 0 ? " neg" : ""}">${p}</span></button>`; };
+  return `<div class="grid g2">
+    <div class="card rv"><h3>Puntos por equipo</h3>${orden.map(x => `<div class="lim-row"><div class="lim-cab">${eq(c, x.i)}<span class="val">${x.pts}<small>pts</small></span></div><div class="barra"><i style="--w:${Math.max(0, Math.round(100 * x.pts / max))}%"></i></div></div>`).join("")}</div>
+    <div class="card rv" style="--i:1"><h3>Últimos puntos</h3>${log.length ? `<ul class="lista dj-log">${log.map(e => { const k = DOJO.find(x => x.k === e.k); return `<li><span class="dj-e">${k.e}</span><span style="flex:1;min-width:0"><b>${esc(nombres[e.pid])}</b><span class="note"> · ${k.n}</span></span><b class="${k.d > 0 ? "mas1" : "menos1"}">${k.d > 0 ? "+1" : "−1"}</b>${ed ? `<button type="button" class="dj-x" data-act="quitarPunto" data-id="${e.id}" aria-label="Quitar este punto">×</button>` : ""}</li>`; }).join("")}</ul>` : `<p class="muted">Aún no se ha dado ningún punto.</p>`}</div>
+  </div>
+  ${eqs.map(x => { const js = cl.jugadores[x.i]; return `<section class="dj-eq rv"><div class="dj-eq-h">${eq(c, x.i)}<span class="badge ${x.pts < 0 ? "vivo" : "fin"}">${x.pts} pts</span></div>
+    ${js.length ? `<div class="dj-grid">${ed ? `<button type="button" class="dj todo" data-act="abrirDar" data-team="${x.i}" style="--tc:${COLORES[x.i]}"><span class="dj-av">${esc(cl.mascotas[x.i])}</span><b>Todo el equipo</b></button>` : ""}${js.map(j => tile(j, x.i)).join("")}</div>` : `<p class="note">Este equipo aún no tiene jugadores. Añádelos en «Equipos».</p>`}</section>`; }).join("")}
+  ${ed ? `<p style="margin-top:22px"><button class="btn peligro peq" type="button" data-act="ceroPuntos">Poner todos los puntos a cero</button></p>` : ""}`;
+}
+function htmlPuntos(c){
+  const cl = C(c), ed = estado.editar;
+  if(!cl.jugadores.slice(0, cl.n).some(j => j.length)){
+    return `<div class="card vacio rv"><span class="em">⭐</span><b>Aún no hay jugadores a los que dar puntos</b>
+      <p>Añade primero los jugadores de cada equipo en «Equipos». Después podrás darles puntos por aire, juego limpio, compañerismo y mucho más.</p>
+      <a class="btn" href="${enlaceLiga(c, "equipos")}">Ir a Equipos</a></div>`;
+  }
+  return `<p class="lb-intro">${ed ? "Toca a un jugador para darle un punto. Con «Todo el equipo» se lo das a todos a la vez." : "Toca a un jugador para ver sus puntos. Para dar puntos, pulsa «Editar resultados»."} Estos puntos premian la actitud y no cambian la clasificación de la liga.</p>
+    <div id="puntosCuerpo">${htmlPuntosCuerpo(c)}</div>`;
+}
+function pintarPuntos(c, pids, d){
+  const cont = $("#puntosCuerpo");
+  if(!cont) return;
+  cont.innerHTML = htmlPuntosCuerpo(c);
+  $$(".rv", cont).forEach(el => el.classList.add("ya", "in"));
+  refrescarKpis(c);
+  (pids || []).forEach(pid => {
+    const t = $(`.dj[data-pid="${pid}"]`, cont);
+    if(!t) return;
+    t.classList.add(d > 0 ? "sube" : "baja");
+    const f = document.createElement("span");
+    f.className = "dj-fly" + (d > 0 ? "" : " neg"); f.textContent = d > 0 ? "+1" : "−1";
+    t.appendChild(f); setTimeout(() => f.remove(), 1000);
+    if(d > 0 && pids.length === 1) confetiEn(t.getBoundingClientRect(), 16);
+  });
+}
+function abrirDar(c, pid, team){
+  const cl = C(c), ed = estado.editar;
+  let titulo, cab, attr;
+  if(team !== null){
+    titulo = "Puntos para todo el equipo"; attr = `data-team="${team}"`;
+    cab = `<div class="dj-cab">${masc(c, team)}<div><b style="font:700 1.15rem var(--title)">${esc(nom(c, team))}</b><div class="note">${cl.jugadores[team].length} jugadores recibirán el punto</div></div></div>`;
+  } else {
+    let j = null, t = -1;
+    for(let i = 0; i < cl.n; i++){ const x = cl.jugadores[i].find(y => y.id === pid); if(x){ j = x; t = i; } }
+    if(!j) return;
+    const p = cl.dojo.p[pid] || {}, tot = ptsJug(c, pid);
+    const chips = DOJO.filter(k => p[k.k]).map(k => `<span>${k.e} ${k.n} × ${p[k.k]}</span>`).join("");
+    titulo = j.n; attr = `data-pid="${pid}"`;
+    cab = `<div class="dj-cab"><span class="dj-av" style="--tc:${COLORES[t]}">${avatar(pid)}</span><div><div class="tot">${tot}<small>puntos</small></div><div class="note">${esc(nom(c, t))}</div></div></div>${chips ? `<div class="chips-d">${chips}</div>` : ""}`;
+  }
+  const boton = k => `<button type="button" class="dj-skill${k.d > 0 ? "" : " neg"}" data-act="dar" data-k="${k.k}" ${attr}><span>${k.e}</span><b>${k.n}</b><small>${k.d > 0 ? "+1" : "−1"}</small></button>`;
+  dialogo({ titulo, html: cab + (ed
+    ? `<h4 class="dj-h">Positivos</h4><div class="dj-skills">${DOJO.filter(k => k.d > 0).map(boton).join("")}</div><h4 class="dj-h">A mejorar</h4><div class="dj-skills">${DOJO.filter(k => k.d < 0).map(boton).join("")}</div>`
+    : `<p class="note" style="margin-top:14px">Para dar puntos, pulsa «Editar resultados».</p>`) });
+}
+function quitarPuntos(c, cual){
+  const cl = C(c);
+  cl.dojo.log = cl.dojo.log.filter(e => {
+    if(!cual(e)) return true;
+    const p = cl.dojo.p[e.pid];
+    if(p && p[e.k]){ p[e.k]--; if(!p[e.k]) delete p[e.k]; }
+    return false;
+  });
+  guardar(); pintarPuntos(c);
+}
+let toastT = null;
+function toast(txt, g){
+  const t = $("#toast");
+  t.innerHTML = `<span>${esc(txt)}</span><button type="button" data-act="deshacer" data-g="${g}">Deshacer</button>`;
+  t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 5000);
 }
 
 /* ---------- liga: equipos ---------- */
@@ -1448,8 +1611,8 @@ document.addEventListener("click", e => {
       });
       break;
     case "borrarTodo":
-      confirmar(`Borrar la Liga de ${c}º`, "Se borrarán todos los resultados, el juego limpio, las estadísticas y la gran final de esta liga. Los equipos y jugadores se mantienen.", "Borrar todo", () => {
-        C(c).actas = {}; C(c).final = null; guardar(); render();
+      confirmar(`Borrar la Liga de ${c}º`, "Se borrarán todos los resultados, el juego limpio, las estadísticas, los puntos de los jugadores y la gran final de esta liga. Los equipos y jugadores se mantienen.", "Borrar todo", () => {
+        C(c).actas = {}; C(c).final = null; C(c).dojo = normDojo(null); guardar(); render();
       });
       break;
     case "crearFinal": {
@@ -1475,13 +1638,38 @@ document.addEventListener("click", e => {
       const hacer = () => {
         const cl = C(c);
         for(let i = nombres.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [nombres[i], nombres[j]] = [nombres[j], nombres[i]]; }
-        cl.jugadores = [[],[],[],[],[]];
+        cl.jugadores = [[],[],[],[],[]]; cl.dojo = normDojo(null);
         nombres.forEach((n, k) => cl.jugadores[k % cl.n].push({ id:uid(), n:n.slice(0, 24) }));
         guardar(); render(); lluvia();
       };
-      if(C(c).jugadores.some(j => j.length)) confirmar("Repartir de nuevo", "Se sustituirán los jugadores actuales de todos los equipos y se perderán sus estadísticas apuntadas.", "Repartir", hacer); else hacer();
+      if(C(c).jugadores.some(j => j.length)) confirmar("Repartir de nuevo", "Se sustituirán los jugadores actuales de todos los equipos y se perderán sus estadísticas y sus puntos.", "Repartir", hacer); else hacer();
       break;
     }
+    case "abrirDar": if(c) abrirDar(c, b.dataset.pid || null, b.dataset.team !== undefined ? +b.dataset.team : null); break;
+    case "dar": {
+      const k = DOJO.find(x => x.k === b.dataset.k);
+      if(!k || !c || !estado.editar) break;
+      const cl = C(c), g = uid(), enEquipo = b.dataset.team !== undefined;
+      const pids = enEquipo ? cl.jugadores[+b.dataset.team].map(j => j.id) : cl.jugadores.some(js => js.some(j => j.id === b.dataset.pid)) ? [b.dataset.pid] : [];
+      if(!pids.length) break;
+      pids.forEach(pid => {
+        const p = cl.dojo.p[pid] || (cl.dojo.p[pid] = {});
+        p[k.k] = Math.min(999, (p[k.k] || 0) + 1);
+        cl.dojo.log.push({ id:uid(), g, t:Date.now(), pid, k:k.k });
+      });
+      cl.dojo.log = cl.dojo.log.slice(-60);
+      let quien = nom(c, +b.dataset.team || 0);
+      if(!enEquipo) cl.jugadores.forEach(js => js.forEach(j => { if(j.id === pids[0]) quien = j.n; }));
+      guardar(); dlg.close(); pintarPuntos(c, pids, k.d);
+      pitido(k.d > 0 ? 1046 : 220, .18);
+      toast(`${k.e} ${k.d > 0 ? "+1" : "−1"} a ${quien} · ${k.n}`, g);
+      break;
+    }
+    case "deshacer": if(c) quitarPuntos(c, e => e.g === b.dataset.g); $("#toast").classList.remove("on"); break;
+    case "quitarPunto": if(c) quitarPuntos(c, e => e.id === b.dataset.id); break;
+    case "ceroPuntos":
+      confirmar("Poner los puntos a cero", `Se borrarán todos los puntos de los jugadores de la Liga de ${c}º. Los resultados de los partidos no cambian.`, "Poner a cero", () => { C(c).dojo = normDojo(null); guardar(); render(); });
+      break;
     case "exportar": {
       const url = URL.createObjectURL(new Blob([JSON.stringify(estado, null, 2)], { type:"application/json" }));
       const a = document.createElement("a"); a.href = url; a.download = "torneo-datchball.json"; document.body.appendChild(a); a.click(); a.remove();
