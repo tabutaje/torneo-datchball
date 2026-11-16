@@ -1,18 +1,33 @@
-# Torneo de datchball en clase · 4º, 5º y 6º de Primaria
+# Torneo de datchball · 4º, 5º y 6º de Primaria
 
-Web para llevar el torneo de datchball de Educación Física desde el móvil, la tablet o la pizarra digital.
+Web del torneo de datchball de Educación Física. Cada curso gestiona su liga desde su propio enlace.
 
-- **Reglas** del datchball según el reglamento oficial de 2024, con el campo dibujado y las jugadas épicas (aire, combo, kamikaze…).
-- **Equipos** mixtos con nombre, color y mascota, y reparto rápido del alumnado.
-- **Partidos** para 4 o 5 equipos, al mejor de 3 partidas, con aires, juego limpio, punto extra y tarjetas verdes.
-- **Clasificación** automática (resultado + juego limpio) con podio.
-- **Cronómetro** de partida con avisos de acorte (línea blanca a los 3 minutos y roja a los 6; en 4º, un solo acorte) y cuenta atrás de 10 segundos.
-- **Roles, semáforo de conflictos y evaluación**.
+**Web:** https://tabutaje.github.io/torneo-datchball/
 
-Los datos se guardan solo en el navegador de quien usa la web. Con «Guardar copia» se descarga un archivo `.json` y con «Cargar copia» se recupera en otro dispositivo.
+## Enlaces directos
 
-## Publicarla con GitHub Pages
+| Sección | Enlace |
+| --- | --- |
+| Liga de 4º | `#/liga/4` |
+| Liga de 5º | `#/liga/5` |
+| Liga de 6º | `#/liga/6` |
+| Dentro de cada liga | `/partidos`, `/clasificacion`, `/jugadores`, `/juego-limpio`, `/equipos` |
+| Reglas, cronómetro, valores, zona profe | `#/reglas`, `#/crono`, `#/valores`, `#/profe` |
 
-En el repositorio: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, rama `main`, carpeta `/ (root)`. Cada cambio que se sube a `main` se publica solo en uno o dos minutos.
+Ejemplo: `https://tabutaje.github.io/torneo-datchball/#/liga/5/clasificacion`
+
+## Qué hace
+
+- **Ligas por curso** con resumen, partidos al mejor de 3 partidas, clasificación con podio y gran final.
+- **Modo edición** para apuntar resultados, juego limpio y estadísticas de cada jugador (aires, eliminaciones y tarjetas verdes).
+- **Mejores jugadores** y **ranking de juego limpio** calculados automáticamente.
+- **Equipos** con nombre, mascota y jugadores, y reparto al azar de la clase.
+- **Reglas** del reglamento oficial de datchball 2024, **cronómetro** con avisos de acorte y página de **valores**.
+
+## Datos
+
+Los datos se guardan en el navegador de cada dispositivo. Para llevarlos a otro dispositivo: botón **Compartir** de cada liga (crea un enlace con los datos) o **Guardar copia / Cargar copia** en la zona profe.
+
+Es un único archivo `index.html`, sin instalación. Cada cambio subido a `main` se publica solo con GitHub Pages.
 
 Fuente de las reglas: [Reglamento oficial de datchball 2024](http://wasg.info/mundialito/Reglamento_Datchball.pdf) · [datchball.com](https://www.datchball.com)
