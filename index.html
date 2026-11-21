@@ -411,6 +411,30 @@ td.tot{font:800 1.15rem var(--title);text-align:center}
 #toast button{border:0;border-radius:999px;background:#fbbf24;color:#161a2e;font:700 .88rem var(--title);padding:6px 12px;cursor:pointer;flex:0 0 auto}
 html.js .rv.ya{transition:none}
 
+/* ---------- autoevaluación ---------- */
+.auto-eq{border-left:6px solid var(--tc)}
+.auto-eq.on{outline:3px solid var(--tc);outline-offset:2px}
+.auto-eq .masc{width:54px;height:54px;font-size:1.7rem}
+.auto-eq > div{flex:1;min-width:0}
+.auto-eq .prog{margin:8px 0 0}
+#autoEquipo{scroll-margin-top:130px;margin-top:26px}
+.auto-row{flex-wrap:wrap}
+.auto-info{flex:1;min-width:150px;display:flex;flex-direction:column;gap:2px}
+.auto-info small{font:700 .76rem var(--title);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.auto-info > span{display:flex;align-items:center;gap:8px;font-weight:700;flex-wrap:wrap}
+.auto-caras{font-size:1.3rem;letter-spacing:2px}
+.auto-med{font:800 1.15rem var(--title);min-width:2.2em;text-align:right}
+.auto-q{padding:12px 0;border-top:1px solid var(--line)}
+.auto-q:first-of-type{margin-top:14px}
+.auto-q > b{font:700 1rem var(--title);display:block;margin-bottom:8px}
+.auto-ops{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.auto-ops button{background:var(--panel2);border:2px solid var(--line);border-radius:14px;padding:8px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:transform .12s,border-color .12s,background .12s}
+.auto-ops span{font-size:1.8rem;line-height:1.2}
+.auto-ops small{font:700 .74rem var(--title);color:var(--muted)}
+.auto-ops button[aria-pressed="true"]{border-color:#f59e0b;background:#fde68a;transform:scale(1.06)}
+.auto-ops button[aria-pressed="true"] small{color:#161a2e}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
 /* ---------- reglas y valores ---------- */
 .phead{background:linear-gradient(135deg,#1e1b4b,#4338ca 60%,#7c3aed);color:#fff;padding:34px 0 30px}
 .phead h1{font-size:clamp(1.9rem,6.5vw,2.8rem);font-weight:800}
@@ -769,7 +793,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           </div>
           <div class="card rv">
             <h3>⭐ ¿Cómo lo hemos hecho?</h3>
-            <p class="note">Al final de cada jornada, 2 minutos: el equipo se puntúa del 1 al 4 y el mediador lo apunta.</p>
+            <p class="note">Después de cada partido, 2 minutos: el equipo se puntúa del 1 al 4 en estas cinco preguntas y lo rellena aquí mismo, en su liga.</p>
+            <p style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><b>Rellenarla:</b><a class="btn peq" href="#/liga/4/autoevaluacion">Liga de 4º</a><a class="btn peq" href="#/liga/5/autoevaluacion">Liga de 5º</a><a class="btn peq" href="#/liga/6/autoevaluacion">Liga de 6º</a></p>
             <div class="preg"><b>¿Hemos lanzado todos?</b><span class="caras">😟🙂😀🤩</span></div>
             <div class="preg"><b>¿Nos hemos animado, también desde el banco?</b><span class="caras">😟🙂😀🤩</span></div>
             <div class="preg"><b>¿Hemos reconocido cuando nos daban?</b><span class="caras">😟🙂😀🤩</span></div>
@@ -796,6 +821,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
             <li>En <b>Equipos</b>, pon nombres, mascotas y jugadores. Puedes repartir la clase al azar.</li>
             <li>En <b>Partidos</b>, apunta las partidas ganadas, el juego limpio y, si quieres, los aires, eliminaciones y tarjetas verdes de cada jugador.</li>
             <li>En <b>Puntos</b>, toca a un jugador para darle puntos por aire, juego limpio, compañerismo, esfuerzo…</li>
+            <li>En <b>Autoevaluación</b>, cada equipo se puntúa después de su partido. Tú ves sus respuestas en modo edición.</li>
             <li><b>Clasificación</b>, <b>Jugadores</b> y <b>Juego limpio</b> se calculan solos.</li>
             <li>Al terminar la liga, crea la <b>gran final</b> desde Partidos.</li>
           </ol>
@@ -864,7 +890,7 @@ const CUR = {
   "5": { col:"#4338ca", col2:"#7c3aed", cat:"alevín" },
   "6": { col:"#b02a5b", col2:"#e0457b", cat:"alevín" }
 };
-const SUBS = [["resumen","Resumen"],["partidos","Partidos"],["clasificacion","Clasificación"],["jugadores","Jugadores"],["puntos","Puntos"],["juego-limpio","Juego limpio"],["equipos","Equipos"]];
+const SUBS = [["resumen","Resumen"],["partidos","Partidos"],["clasificacion","Clasificación"],["jugadores","Jugadores"],["puntos","Puntos"],["juego-limpio","Juego limpio"],["autoevaluacion","Autoevaluación"],["equipos","Equipos"]];
 const CRIT = [["🤝","Respeto"],["🙋","Honestidad"],["💪","Cooperación"]];
 const FIXTURES = {
   4: { rondas: [[[0,1],[2,3]],[[0,2],[1,3]],[[0,3],[1,2]],[[1,0],[3,2]],[[2,0],[3,1]],[[3,0],[2,1]]], servicio: null },
@@ -910,6 +936,7 @@ function normClase(c, nViejo){
   const o = { n: c.n ? (c.n === 5 ? 5 : 4) : (nViejo === 5 ? 5 : 4), nombres:[], mascotas:[], jugadores:[], actas:{}, final:null,
               alumnos: typeof c.alumnos === "string" ? c.alumnos.slice(0, 4000) : "" };
   o.dojo = normDojo(c.dojo);
+  o.auto = normAuto(c.auto);
   for(let i = 0; i < 5; i++){
     const nm = c.nombres && typeof c.nombres[i] === "string" ? c.nombres[i].slice(0, 28) : "";
     o.nombres.push(nm || "Equipo " + LETRAS[i]);
@@ -1117,6 +1144,7 @@ function ruta(){
   if(p[0] === "liga" && CURSOS.indexOf(p[1]) >= 0){
     r.page = "liga"; r.curso = p[1];
     if(SUBS.some(s => s[0] === p[2])) r.sub = p[2];
+    r.extra = p[3] || "";
   } else if(["reglas","crono","valores","profe"].indexOf(p[0]) >= 0) r.page = p[0];
   return r;
 }
@@ -1144,6 +1172,9 @@ function render(){
     if(scrollY > y) scrollTo({ top:y, behavior:"instant" });
   } else if(!mismaLiga) scrollTo({ top:0, behavior:"instant" });
   observar(); contar();
+  if(R.page === "liga" && R.sub === "autoevaluacion" && R.extra && (!prev || prev.extra !== R.extra || prev.sub !== R.sub)){
+    const sec = $("#autoEquipo"); if(sec) sec.scrollIntoView({ block:"start", behavior:"instant" });
+  }
   revisarEnlace();
 }
 addEventListener("hashchange", render);
@@ -1179,7 +1210,7 @@ function htmlKpis(c){
 }
 function renderLiga(){
   const c = R.curso, cl = C(c), ed = estado.editar;
-  const cuerpo = ({ resumen:htmlResumen, partidos:htmlPartidos, clasificacion:htmlClasificacion, jugadores:htmlJugadores, puntos:htmlPuntos, "juego-limpio":htmlLimpio, equipos:htmlEquipos })[R.sub](c);
+  const cuerpo = ({ resumen:htmlResumen, partidos:htmlPartidos, clasificacion:htmlClasificacion, jugadores:htmlJugadores, puntos:htmlPuntos, "juego-limpio":htmlLimpio, autoevaluacion:htmlAuto, equipos:htmlEquipos })[R.sub](c);
   $("#liga").style.cssText = `--lc:${CUR[c].col};--lc2:${CUR[c].col2}`;
   $("#liga").innerHTML = `
     <div class="lh"><div class="wrap">
@@ -1499,6 +1530,68 @@ function toast(txt, g){
   clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 5000);
 }
 
+/* ---------- liga: autoevaluación de los equipos ---------- */
+const AUTO_Q = [["¿Hemos lanzado todos?","Lanzamos todos"],["¿Nos hemos animado, también desde el banco?","Ánimo"],["¿Hemos reconocido cuando nos daban?","Honestidad"],["¿Hemos respetado al árbitro y al rival?","Respeto"],["¿Hemos cumplido nuestro contrato?","Contrato"]];
+const CARAS = [["😟","Poco"],["🙂","Regular"],["😀","Bien"],["🤩","¡Genial!"]];
+function normAuto(d){
+  const o = {};
+  if(!d || typeof d !== "object") return o;
+  Object.keys(d).slice(0, 40).forEach(k => {
+    if(!/^([45]-\d-\d|F[45][ftq])$/.test(k) || !d[k] || typeof d[k] !== "object") return;
+    const x = {};
+    ["l","v"].forEach(s => {
+      const e = d[k][s];
+      if(e && Array.isArray(e.r) && e.r.length === 5){
+        const r = e.r.map(n => parseInt(n, 10));
+        if(r.every(n => n >= 1 && n <= 4)) x[s] = { r, t: +e.t || 0 };
+      }
+    });
+    if(x.l || x.v) o[k] = x;
+  });
+  return o;
+}
+const autoKey = (c, m) => m.fin ? "F" + C(c).n + m.fin : m.key;
+const autoDe = (c, m, t) => { const a = C(c).auto[autoKey(c, m)]; return (a && a[m.l === t ? "l" : "v"]) || null; };
+const media = r => r.reduce((s, x) => s + x, 0) / r.length;
+const fmt1 = x => x.toFixed(1).replace(".", ",");
+const partidosDe = (c, t) => todos(c).filter(m => m.l === t || m.v === t);
+function htmlAuto(c){
+  const cl = C(c), ed = estado.editar, sel = /^[0-4]$/.test(R.extra || "") && +R.extra < cl.n ? +R.extra : -1, info = [];
+  for(let i = 0; i < cl.n; i++){ const ms = partidosDe(c, i); info.push({ i, ms, hechas: ms.map(m => autoDe(c, m, i)).filter(Boolean) }); }
+  let out = `<p class="lb-intro">Después de cada partido, el equipo se junta 2 minutos y se puntúa del 1 al 4 en cinco preguntas. ${ed ? "En modo edición ves lo que ha respondido cada equipo." : "Elegid vuestro equipo y el partido que acabáis de jugar. Las respuestas solo las ve el profe."}</p>`;
+  if(ed){
+    out += `<div class="card rv" style="margin-bottom:24px"><h3>Respuestas de los equipos</h3><div class="scroll"><table>
+      <thead><tr><th>Equipo</th><th class="num">Hechas</th>${AUTO_Q.map(q => `<th class="num">${q[1]}</th>`).join("")}<th class="num">Media</th></tr></thead>
+      <tbody>${info.map(x => {
+        const n = x.hechas.length;
+        return `<tr><td class="tabla-eq">${eq(c, x.i)}</td><td class="num">${n} / ${x.ms.length}</td>${AUTO_Q.map((q, k) => `<td class="num">${n ? fmt1(x.hechas.reduce((s, e) => s + e.r[k], 0) / n) : "–"}</td>`).join("")}<td class="tot">${n ? fmt1(x.hechas.reduce((s, e) => s + media(e.r), 0) / n) : "–"}</td></tr>`;
+      }).join("")}</tbody></table></div>
+      <p class="note" style="margin-top:12px">Escala: 1 😟 poco · 2 🙂 regular · 3 😀 bien · 4 🤩 genial. Toca un equipo para ver cada partido. Las respuestas se guardan en este dispositivo: los equipos tienen que rellenarla aquí.</p></div>`;
+  }
+  out += `<h2 style="margin-bottom:14px">${ed ? "Equipos" : "¿Qué equipo sois?"}</h2><div class="grid g2 stag">${info.map(x => `<a class="card atajo auto-eq${sel === x.i ? " on" : ""}" href="#/liga/${c}/autoevaluacion/${x.i}" style="--tc:${COLORES[x.i]}">${masc(c, x.i)}<div><b>${esc(nom(c, x.i))}</b><span>${x.hechas.length} de ${x.ms.length} autoevaluaciones hechas</span><div class="prog"><i style="--w:${x.ms.length ? Math.round(100 * x.hechas.length / x.ms.length) : 0}%"></i></div></div></a>`).join("")}</div>`;
+  if(sel >= 0){
+    out += `<section id="autoEquipo" class="card rv"><h3>${esc(nom(c, sel))}: ${ed ? "sus partidos" : "vuestros partidos"}</h3><ul class="lista">${info[sel].ms.map(m => {
+      const rival = m.l === sel ? m.v : m.l, a = leer(c, m), ev = autoDe(c, m, sel);
+      const res = empezado(a) ? (m.l === sel ? `${a.pl} : ${a.pv}` : `${a.pv} : ${a.pl}`) : "";
+      let dcha;
+      if(!ev) dcha = `<button type="button" class="btn peq" data-act="autoAbrir" data-m="${m.id}" data-eq="${sel}">Rellenar</button>`;
+      else if(ed) dcha = `<span class="auto-caras" title="${ev.r.join(" · ")}">${ev.r.map(v => CARAS[v - 1][0]).join("")}</span><b class="auto-med">${fmt1(media(ev.r))}</b><button type="button" class="dj-x" data-act="autoBorrar" data-k="${autoKey(c, m)}" data-s="${m.l === sel ? "l" : "v"}" aria-label="Borrar esta autoevaluación">×</button>`;
+      else dcha = `<span class="badge fin">✅ Hecha</span>`;
+      return `<li class="auto-row"><div class="auto-info"><small>${m.fin ? esc(m.titulo) : "Ronda " + (m.r + 1)}${res ? " · " + res : ""}</small><span>contra ${eq(c, rival)}</span></div>${dcha}</li>`;
+    }).join("")}</ul></section>`;
+  }
+  return out;
+}
+let autoForm = null;
+function abrirAuto(c, m, t){
+  autoForm = { c, k:autoKey(c, m), s: m.l === t ? "l" : "v", r:[0,0,0,0,0] };
+  const rival = m.l === t ? m.v : m.l;
+  dialogo({ titulo:"¿Cómo lo hemos hecho?", html:`<div class="dj-cab">${masc(c, t)}<div><b style="font:700 1.1rem var(--title)">${esc(nom(c, t))}</b><div class="note">${m.fin ? esc(m.titulo) : "Ronda " + (m.r + 1)} · contra ${esc(nom(c, rival))}</div></div></div>
+    ${AUTO_Q.map((q, i) => `<div class="auto-q"><b>${i + 1}. ${q[0]}</b><div class="auto-ops">${CARAS.map((x, v) => `<button type="button" data-act="autoCara" data-q="${i}" data-v="${v + 1}" aria-pressed="false"><span>${x[0]}</span><small>${x[1]}</small></button>`).join("")}</div></div>`).join("")}
+    <p style="margin:16px 0 0;display:flex;flex-wrap:wrap;gap:10px;align-items:center"><button type="button" class="btn" id="autoGuardar" data-act="autoGuardar" disabled>Guardar</button><span class="note" id="autoFalta">Faltan 5 preguntas</span></p>`,
+    botones:[{ t:"Cancelar" }] });
+}
+
 /* ---------- liga: equipos ---------- */
 function htmlEquipo(c, i, picker){
   const cl = C(c), ed = estado.editar, js = cl.jugadores[i];
@@ -1613,18 +1706,18 @@ document.addEventListener("click", e => {
       });
       break;
     case "borrarTodo":
-      confirmar(`Borrar la Liga de ${c}º`, "Se borrarán todos los resultados, el juego limpio, las estadísticas, los puntos de los jugadores y la gran final de esta liga. Los equipos y jugadores se mantienen.", "Borrar todo", () => {
-        C(c).actas = {}; C(c).final = null; C(c).dojo = normDojo(null); guardar(); render();
+      confirmar(`Borrar la Liga de ${c}º`, "Se borrarán todos los resultados, el juego limpio, las estadísticas, los puntos de los jugadores, las autoevaluaciones y la gran final de esta liga. Los equipos y jugadores se mantienen.", "Borrar todo", () => {
+        C(c).actas = {}; C(c).final = null; C(c).dojo = normDojo(null); C(c).auto = {}; guardar(); render();
       });
       break;
     case "crearFinal": {
-      const crear = () => { const cl = C(c); cl.final = { n:cl.n, seeds:calcular(c).map(x => x.i), actas:{} }; guardar(); render(); lluvia(); };
+      const crear = () => { const cl = C(c); cl.final = { n:cl.n, seeds:calcular(c).map(x => x.i), actas:{} }; Object.keys(cl.auto).forEach(k => { if(k[0] === "F") delete cl.auto[k]; }); guardar(); render(); lluvia(); };
       const quedan = lista(c).length - jugadosLiga(c);
       if(quedan) confirmar("Crear la gran final", `Aún quedan ${quedan} partidos de liga por jugar. La final se creará con la clasificación actual.`, "Crear igualmente", crear); else crear();
       break;
     }
     case "rehacerFinal":
-      confirmar("Rehacer la gran final", "Se borrarán los resultados de la final y se volverá a crear con la clasificación actual.", "Rehacer", () => { C(c).final = null; guardar(); render(); });
+      confirmar("Rehacer la gran final", "Se borrarán los resultados de la final y se volverá a crear con la clasificación actual.", "Rehacer", () => { C(c).final = null; Object.keys(C(c).auto).forEach(k => { if(k[0] === "F") delete C(c).auto[k]; }); guardar(); render(); });
       break;
     case "mascota": if(tcard && estado.editar){ const abierto = !!$(".picker", tcard); tcard.outerHTML = htmlEquipo(c, ti, !abierto); marcarVisibles(); } break;
     case "elegirMascota":
@@ -1671,6 +1764,33 @@ document.addEventListener("click", e => {
     case "quitarPunto": if(c) quitarPuntos(c, e => e.id === b.dataset.id); break;
     case "ceroPuntos":
       confirmar("Poner los puntos a cero", `Se borrarán todos los puntos de los jugadores de la Liga de ${c}º. Los resultados de los partidos no cambian.`, "Poner a cero", () => { C(c).dojo = normDojo(null); guardar(); render(); });
+      break;
+    case "autoAbrir": if(m && m.v !== null) abrirAuto(c, m, +b.dataset.eq); break;
+    case "autoCara": {
+      if(!autoForm) break;
+      const q = +b.dataset.q;
+      autoForm.r[q] = +b.dataset.v;
+      $$(`#dlg [data-act="autoCara"][data-q="${q}"]`).forEach(x => x.setAttribute("aria-pressed", x === b));
+      const faltan = autoForm.r.filter(x => !x).length;
+      $("#autoGuardar").disabled = faltan > 0;
+      $("#autoFalta").textContent = faltan ? `Falta${faltan > 1 ? "n" : ""} ${faltan} pregunta${faltan > 1 ? "s" : ""}` : "¡Todo listo!";
+      break;
+    }
+    case "autoGuardar": {
+      if(!autoForm || autoForm.r.some(x => !x)) break;
+      const cl = C(autoForm.c), k = autoForm.k;
+      if(!cl.auto[k]) cl.auto[k] = {};
+      if(!cl.auto[k][autoForm.s] || estado.editar) cl.auto[k][autoForm.s] = { r:autoForm.r.slice(), t:Date.now() };
+      autoForm = null;
+      guardar(); dlg.close(); render(); lluvia();
+      break;
+    }
+    case "autoBorrar":
+      confirmar("Borrar esta autoevaluación", "El equipo podrá volver a rellenarla.", "Borrar", () => {
+        const a = C(c).auto[b.dataset.k];
+        if(a){ delete a[b.dataset.s]; if(!a.l && !a.v) delete C(c).auto[b.dataset.k]; }
+        guardar(); render();
+      });
       break;
     case "exportar": {
       const url = URL.createObjectURL(new Blob([JSON.stringify(estado, null, 2)], { type:"application/json" }));

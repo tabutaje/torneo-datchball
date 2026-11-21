@@ -11,7 +11,7 @@ Web del torneo de datchball de Educación Física. Cada curso gestiona su liga d
 | Liga de 4º | `#/liga/4` |
 | Liga de 5º | `#/liga/5` |
 | Liga de 6º | `#/liga/6` |
-| Dentro de cada liga | `/partidos`, `/clasificacion`, `/jugadores`, `/puntos`, `/juego-limpio`, `/equipos` |
+| Dentro de cada liga | `/partidos`, `/clasificacion`, `/jugadores`, `/puntos`, `/juego-limpio`, `/autoevaluacion`, `/equipos` |
 | Reglas, cronómetro, valores, zona profe | `#/reglas`, `#/crono`, `#/valores`, `#/profe` |
 
 Ejemplo: `https://tabutaje.github.io/torneo-datchball/#/liga/5/clasificacion`
@@ -21,6 +21,7 @@ Ejemplo: `https://tabutaje.github.io/torneo-datchball/#/liga/5/clasificacion`
 - **Ligas por curso** con resumen, partidos al mejor de 3 partidas, clasificación con podio y gran final.
 - **Modo edición** para apuntar resultados, juego limpio y estadísticas de cada jugador (aires, eliminaciones y tarjetas verdes).
 - **Puntos** para cada jugador (aire, juego limpio, compañerismo, esfuerzo…), tocando su ficha.
+- **Autoevaluación** interactiva: cada equipo se puntúa después de cada partido y el profe ve las respuestas en modo edición.
 - **Mejores jugadores** y **ranking de juego limpio** calculados automáticamente.
 - **Equipos** con nombre, mascota y jugadores, y reparto al azar de la clase.
 - **Reglas** del reglamento oficial de datchball 2024, **cronómetro** con avisos de acorte y página de **valores**.
