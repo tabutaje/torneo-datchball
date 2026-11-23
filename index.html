@@ -622,7 +622,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           </svg>
           <div class="leyenda" style="justify-content:center">
             <span><i style="background:#1e1b4b"></i>Línea central: no se pisa</span>
-            <span><i style="background:#fff;border:1px solid var(--muted)"></i>Línea blanca: acorte del campo (minuto 3)</span>
+            <span><i style="background:#fff;border:1px solid var(--muted)"></i>Línea blanca: acorte del campo (minuto 5)</span>
             <span><i style="background:var(--wall)"></i>Pared del fondo: aquí se sale</span>
           </div>
         </div>
@@ -641,7 +641,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           <div class="regla"><span class="n">8</span><div class="e">🛡️</div><b>Escudo</b><p>Puedes desviar lanzamientos con la pelota que tienes en las manos. La mano que la sujeta cuenta como escudo. Si la pelota desviada te da a ti o a un compañero y cae, estáis eliminados. Si se te cae el escudo, no pasa nada.</p></div>
           <div class="regla"><span class="n">9</span><div class="e">⏳</div><b>¡Lanza!</b><p>El equipo que tiene más pelotas está obligado a lanzar. Si tarda, el árbitro cuenta de 10 a 0. Si llega a 0 sin lanzar, pierde todas sus pelotas.</p></div>
           <div class="regla"><span class="n">10</span><div class="e">🙌</div><b>Solo con las manos</b><p>Se lanza o se golpea con las manos. No vale dar patadas a propósito ni esconder la pelota dentro de la camiseta.</p></div>
-          <div class="regla"><span class="n">11</span><div class="e">✂️</div><b>El campo se encoge</b><p>A los 3 minutos el árbitro acorta el campo con la línea blanca: desde ese momento solo podéis pasar detrás de ella para ir a buscar una pelota. Lo hace cuando un equipo tiene 2 pelotas y el otro 1.</p></div>
+          <div class="regla"><span class="n">11</span><div class="e">✂️</div><b>Partidas de 10 minutos</b><p>Cada partida dura 10 minutos. A los 5, el árbitro acorta el campo con la línea blanca: desde ese momento solo podéis pasar detrás de ella para ir a buscar una pelota. Lo hace cuando un equipo tiene 2 pelotas y el otro 1.</p></div>
           <div class="regla"><span class="n">12</span><div class="e">⚔️</div><b>Duelo 1 contra 1</b><p>Si los últimos jugadores se eliminan a la vez: cada uno en su línea blanca, con una pelota a sus pies. «¡Datchball!»: un solo lanzamiento y 10 segundos para cada uno.</p></div>
         </div>
       </div>
@@ -684,7 +684,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
   <section class="page" data-page="crono">
     <div class="phead"><div class="wrap">
       <h1>Cronómetro</h1>
-      <p>Una partida no tiene tiempo fijo: dura hasta que un equipo elimina al otro. Para que no se alargue, el campo se encoge: a los 3 minutos se acorta hasta la línea blanca.</p>
+      <p>Cada partida dura 10 minutos. A los 5 minutos el campo se acorta hasta la línea blanca.</p>
     </div></div>
     <div class="wrap">
       <div class="sec stack">
@@ -692,7 +692,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           <div class="fases"><span class="fase" id="numPartida">Partida 1</span><span class="fase campo" id="fase">Campo entero</span></div>
           <div class="reloj" id="reloj">0:00</div>
           <div class="progreso"><i id="barraCrono"></i></div>
-          <div class="marcas"><span>0:00</span><span>3:00 ⬜ línea blanca</span></div>
+          <div class="marcas"><span>0:00</span><span>5:00 ⬜ línea blanca</span><span>10:00 🏁 fin</span></div>
           <div class="botones">
             <div><button class="redondo" id="btnReset" type="button" aria-label="Reiniciar">↺</button><small>Reiniciar</small></div>
             <div><button class="redondo play" id="btnStart" type="button" aria-label="Empezar">▶</button><small id="txtStart">¡Datchball!</small></div>
@@ -797,7 +797,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
         <div class="grid g2">
           <div class="card rv">
             <h3>Campo y material</h3>
-            <p>El reglamento recomienda un espacio cerrado, con paredes donde la pelota rebote. Las medidas van de 6 × 6 m para los más pequeños a 18 × 8 m para los mayores. En el centro de cada mitad hay una línea blanca para acortar el campo a los 3 minutos.</p>
+            <p>El reglamento recomienda un espacio cerrado, con paredes donde la pelota rebote. Las medidas van de 6 × 6 m para los más pequeños a 18 × 8 m para los mayores. En el centro de cada mitad hay una línea blanca para acortar el campo a los 5 minutos. Cada partida dura 10 minutos.</p>
             <ul>
               <li>3 pelotas blandas de unos 16,5 cm por campo (6 en total). En 5º y 6º, el reglamento usa 2 pelotas «training» y 1 oficial; en 4º, 3 «training».</li>
               <li>Cinta o tiza para la línea central y las dos líneas blancas.</li>
@@ -1848,15 +1848,17 @@ function revisarEnlace(){
 }
 
 /* ---------- cronómetro ---------- */
+const ACORTE = 300, DURACION = 600;
 let seg = 0, partida = 1, corriendo = false, intervalo = null, avisos = {};
 const elReloj = $("#reloj"), elFase = $("#fase"), elPartida = $("#numPartida"), elAviso = $("#avisoCrono"), elBarra = $("#barraCrono"), btnStart = $("#btnStart"), txtStart = $("#txtStart");
 const mmss = s => Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
 function pintarReloj(){
   elReloj.textContent = mmss(seg);
   elPartida.textContent = "Partida " + partida;
-  const acortado = seg >= 180;
-  elFase.className = "fase " + (acortado ? "blanca" : "campo"); elFase.textContent = acortado ? "Línea blanca" : "Campo entero";
-  elBarra.style.width = Math.min(100, 100 * seg / 180) + "%";
+  const fin = seg >= DURACION, acortado = seg >= ACORTE;
+  elFase.className = "fase" + (fin ? "" : acortado ? " blanca" : " campo");
+  elFase.textContent = fin ? "Tiempo cumplido" : acortado ? "Línea blanca" : "Campo entero";
+  elBarra.style.width = Math.min(100, 100 * seg / DURACION) + "%";
   btnStart.textContent = corriendo ? "⏸" : "▶";
   btnStart.setAttribute("aria-label", corriendo ? "Pausa" : "Empezar");
   btnStart.style.animation = corriendo ? "none" : "";
@@ -1878,16 +1880,22 @@ function pitido(freq, dur){
 }
 function tick(){
   seg++;
-  if(seg === 180 && !avisos[180]){
-    avisos[180] = true;
+  if(seg === ACORTE && !avisos.acorte){
+    avisos.acorte = true;
     aviso("⬜ ¡LÍNEA BLANCA! Acortad cuando un equipo tenga 2 pelotas y el otro 1", true);
     pitido(660, .25); setTimeout(() => pitido(660, .25), 300);
+  }
+  if(seg >= DURACION){
+    pararReloj();
+    aviso("⏰ ¡TIEMPO! Se acaban los 10 minutos de la partida", true);
+    pitido(440, .3); setTimeout(() => pitido(440, .3), 400); setTimeout(() => pitido(330, .8), 800);
   }
   pintarReloj();
 }
 const pararReloj = () => { corriendo = false; if(intervalo){ clearInterval(intervalo); intervalo = null; } };
 btnStart.addEventListener("click", () => {
   if(corriendo){ pararReloj(); aviso("⏸ Pausa", false); }
+  else if(seg >= DURACION){ aviso("⏰ Partida terminada. Pulsa 🏁 para empezar la siguiente.", false); }
   else {
     corriendo = true; intervalo = setInterval(tick, 1000);
     if(seg === 0){ aviso("📣 ¡DATCHBALL! ¡A por las pelotas!", true); pitido(880, .4); } else aviso("▶ Seguimos", false);

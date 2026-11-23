@@ -24,7 +24,7 @@ Ejemplo: `https://tabutaje.github.io/torneo-datchball/#/liga/5/clasificacion`
 - **Autoevaluación** interactiva: cada equipo se puntúa después de cada partido y el profe ve las respuestas en modo edición.
 - **Mejores jugadores** y **ranking de juego limpio** calculados automáticamente.
 - **Equipos** con nombre, mascota y jugadores, y reparto al azar de la clase.
-- **Reglas** del reglamento oficial de datchball 2024, **cronómetro** con aviso de acorte a los 3 minutos y página de **valores**.
+- **Reglas** del reglamento oficial de datchball 2024, **cronómetro** con partidas de 10 minutos y aviso de acorte a los 5 y página de **valores**.
 
 ## Datos
 
