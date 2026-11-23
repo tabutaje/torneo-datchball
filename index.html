@@ -641,8 +641,8 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
           <div class="regla"><span class="n">8</span><div class="e">🛡️</div><b>Escudo</b><p>Puedes desviar lanzamientos con la pelota que tienes en las manos. La mano que la sujeta cuenta como escudo. Si la pelota desviada te da a ti o a un compañero y cae, estáis eliminados. Si se te cae el escudo, no pasa nada.</p></div>
           <div class="regla"><span class="n">9</span><div class="e">⏳</div><b>¡Lanza!</b><p>El equipo que tiene más pelotas está obligado a lanzar. Si tarda, el árbitro cuenta de 10 a 0. Si llega a 0 sin lanzar, pierde todas sus pelotas.</p></div>
           <div class="regla"><span class="n">10</span><div class="e">🙌</div><b>Solo con las manos</b><p>Se lanza o se golpea con las manos. No vale dar patadas a propósito ni esconder la pelota dentro de la camiseta.</p></div>
-          <div class="regla"><span class="n">11</span><div class="e">✂️</div><b>Partidas de 10 minutos</b><p>Cada partida dura 10 minutos. A los 5, el árbitro acorta el campo con la línea blanca: desde ese momento solo podéis pasar detrás de ella para ir a buscar una pelota. Lo hace cuando un equipo tiene 2 pelotas y el otro 1.</p></div>
-          <div class="regla"><span class="n">12</span><div class="e">⚔️</div><b>Duelo 1 contra 1</b><p>Si los últimos jugadores se eliminan a la vez: cada uno en su línea blanca, con una pelota a sus pies. «¡Datchball!»: un solo lanzamiento y 10 segundos para cada uno.</p></div>
+          <div class="regla"><span class="n">11</span><div class="e">✂️</div><b>Partidas de 10 minutos</b><p>Cada partida dura 10 minutos. A los 5, el árbitro acorta el campo con la línea blanca: desde ese momento solo podéis pasar detrás de ella para ir a buscar una pelota. Lo hace cuando un equipo tiene 2 pelotas y el otro 1. Si se acaba el tiempo, gana la partida el equipo con más jugadores en la pista.</p></div>
+          <div class="regla"><span class="n">12</span><div class="e">⚔️</div><b>Duelo 1 contra 1</b><p>Si los últimos jugadores se eliminan a la vez, o si al acabar el tiempo los dos equipos tienen los mismos jugadores en la pista: un jugador de cada equipo se coloca en su línea blanca, con una pelota a sus pies. «¡Datchball!»: un solo lanzamiento y 10 segundos para cada uno.</p></div>
         </div>
       </div>
 
@@ -684,7 +684,7 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
   <section class="page" data-page="crono">
     <div class="phead"><div class="wrap">
       <h1>Cronómetro</h1>
-      <p>Cada partida dura 10 minutos. A los 5 minutos el campo se acorta hasta la línea blanca.</p>
+      <p>Cada partida dura 10 minutos. A los 5 minutos el campo se acorta hasta la línea blanca. Si se acaba el tiempo, gana el equipo con más jugadores en la pista.</p>
     </div></div>
     <div class="wrap">
       <div class="sec stack">
@@ -1887,7 +1887,7 @@ function tick(){
   }
   if(seg >= DURACION){
     pararReloj();
-    aviso("⏰ ¡TIEMPO! Se acaban los 10 minutos de la partida", true);
+    aviso("⏰ ¡TIEMPO! Gana la partida el equipo con más jugadores en la pista", true);
     pitido(440, .3); setTimeout(() => pitido(440, .3), 400); setTimeout(() => pitido(330, .8), 800);
   }
   pintarReloj();
