@@ -28,7 +28,11 @@ Ejemplo: `https://tabutaje.github.io/torneo-datchball/#/liga/5/clasificacion`
 
 ## Datos
 
-Los datos se guardan en el navegador de cada dispositivo. Para llevarlos a otro dispositivo: botón **Compartir** de cada liga (crea un enlace con los datos) o **Guardar copia / Cargar copia** en la zona profe.
+Los datos se sincronizan con **Firebase (Firestore)**: todos los dispositivos ven lo mismo. Cualquiera puede consultar las ligas y enviar su autoevaluación; solo la cuenta de Google del profe puede editar y ver las autoevaluaciones.
+
+- Las reglas de seguridad están en [`firestore.rules`](firestore.rules). Hay que pegarlas en Firebase → Firestore Database → Reglas, cambiando el correo del profe.
+- La configuración de Firebase que aparece en `index.html` es pública por diseño; la seguridad la ponen esas reglas.
+- Si no hay conexión, la web muestra los últimos datos guardados en el dispositivo.
 
 Es un único archivo `index.html`, sin instalación. Cada cambio subido a `main` se publica solo con GitHub Pages.
 

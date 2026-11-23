@@ -434,6 +434,8 @@ html.js .rv.ya{transition:none}
 .auto-ops button[aria-pressed="true"] small{color:#161a2e}
 .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 
+.quieto .lb{animation:none}
+
 /* ---------- reglas y valores ---------- */
 .phead{background:linear-gradient(135deg,#1e1b4b,#4338ca 60%,#7c3aed);color:#fff;padding:34px 0 30px}
 .phead h1{font-size:clamp(1.9rem,6.5vw,2.8rem);font-weight:800}
@@ -819,6 +821,10 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
             </ul>
           </div>
         </div>
+        <div class="card rv" id="nubeCard">
+          <h3>☁️ Sincronización</h3>
+          <div id="nubeInfo"></div>
+        </div>
         <div class="card rv">
           <h3>Copias de seguridad</h3>
           <p class="note">Guarda en un archivo los datos de las tres ligas, o cárgalos en otro dispositivo.</p>
@@ -835,12 +841,22 @@ footer{border-top:1px solid var(--line);padding:22px 0 34px;color:var(--muted);f
 
 </main>
 
-<footer><div class="wrap">Torneo de datchball · 4º, 5º y 6º de Primaria · Los datos se guardan en este dispositivo</div></footer>
+<footer><div class="wrap">Torneo de datchball · 4º, 5º y 6º de Primaria · <span id="pieDatos">Los datos se guardan en este dispositivo</span></div></footer>
 
 <div id="toast" role="status" aria-live="polite"></div>
 
 <dialog id="dlg"><div class="dlg-in"><h3 id="dlgT"></h3><div id="dlgB"></div><div class="dlg-btns" id="dlgBtns"></div></div></dialog>
 
+<script>
+window.DATCHBALL_FIREBASE = {
+  apiKey: "AIzaSyDCOWs-6aZPm3Rd-AL4nk-2gg0afFNgki0",
+  authDomain: "torneo-datchball.firebaseapp.com",
+  projectId: "torneo-datchball",
+  storageBucket: "torneo-datchball.firebasestorage.app",
+  messagingSenderId: "843561036463",
+  appId: "1:843561036463:web:936fca280f64e7c2d5425a"
+};
+</script>
 <script>
 (() => {
 "use strict";
@@ -938,7 +954,9 @@ function normalizar(d){
   return o;
 }
 let estado = (() => { let d = null; try{ d = JSON.parse(localStorage.getItem(STORE) || "null"); }catch(e){} return normalizar(d); })();
-const guardar = () => { try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){} };
+let NUBE = null;
+const nube = { conf: !!window.DATCHBALL_FIREBASE, usuario:null, admin:false, authListo:false, online:true, error:"", ultimo:{}, recibido:{}, faltan:new Set(), autoRemoto:new Set(), autoRecibido:false, timer:null };
+const guardar = () => { try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){} if(NUBE && nube.admin) programarSubida(); };
 const C = c => estado.clases[c];
 const nom = (c, i) => { const n = C(c).nombres[i]; return n && n.trim() ? n.trim() : "Equipo " + LETRAS[i]; };
 const masc = (c, i, extra) => i === null
@@ -1073,7 +1091,7 @@ function observar(){
   setTimeout(() => $$(".rv:not(.in)").forEach(el => { const r = el.getBoundingClientRect(); if(r.width && r.top < innerHeight) el.classList.add("in"); }), 900);
 }
 function contar(){
-  if(reducir) return;
+  if(reducir || sinAnim) return;
   $$("[data-count]").forEach(el => {
     const fin = +el.dataset.count;
     if(!fin || el.dataset.hecho) return;
@@ -1118,6 +1136,7 @@ function ruta(){
 const enlaceLiga = (c, sub) => `#/liga/${c}${sub && sub !== "resumen" ? "/" + sub : ""}`;
 function render(){
   const prev = R;
+  $("#main").classList.remove("quieto");
   R = ruta();
   $$(".page").forEach(p => p.classList.toggle("on", p.dataset.page === R.page));
   const navId = R.page === "liga" ? "liga" + R.curso : R.page;
@@ -1131,6 +1150,7 @@ function render(){
   } else if(R.page !== "home") titulo = ({ reglas:"Reglas", crono:"Cronómetro", valores:"Equipo y valores", profe:"Zona profe" })[R.page] + " · " + titulo;
   document.title = titulo;
   pintarReloj();
+  pintarNube();
   const mismaLiga = prev && prev.page === "liga" && R.page === "liga" && prev.curso === R.curso;
   if(mismaLiga && prev.sub !== R.sub){
     const lh = $("#liga .lh"), y = lh.offsetTop + lh.offsetHeight - $(".top").offsetHeight;
@@ -1192,7 +1212,7 @@ function renderLiga(){
     <nav class="subnav" aria-label="Secciones de la liga"><div class="wrap">
       ${SUBS.map(s => `<a href="${enlaceLiga(c, s[0])}"${s[0] === R.sub ? ' aria-current="page"' : ""}>${s[1]}</a>`).join("")}
     </div></nav>
-    ${ed ? `<div class="modo"><div class="wrap">✏️ Modo edición: los cambios se guardan solos en este dispositivo.</div></div>` : ""}
+    ${ed ? `<div class="modo"><div class="wrap">✏️ Modo edición: ${NUBE ? "los cambios se guardan en la nube y se ven en todos los dispositivos." : "los cambios se guardan solos en este dispositivo."}</div></div>` : ""}
     <div class="wrap lb">${cuerpo}</div>`;
   const a = $(".subnav a[aria-current]"); if(a) a.scrollIntoView({ block:"nearest", inline:"center" });
 }
@@ -1528,10 +1548,10 @@ function htmlAuto(c){
     out += `<div class="card rv" style="margin-bottom:24px"><h3>Respuestas de los equipos</h3><div class="scroll"><table>
       <thead><tr><th>Equipo</th><th class="num">Hechas</th>${AUTO_Q.map(q => `<th class="num">${q[1]}</th>`).join("")}<th class="num">Media</th></tr></thead>
       <tbody>${info.map(x => {
-        const n = x.hechas.length;
-        return `<tr><td class="tabla-eq">${eq(c, x.i)}</td><td class="num">${n} / ${x.ms.length}</td>${AUTO_Q.map((q, k) => `<td class="num">${n ? fmt1(x.hechas.reduce((s, e) => s + e.r[k], 0) / n) : "–"}</td>`).join("")}<td class="tot">${n ? fmt1(x.hechas.reduce((s, e) => s + media(e.r), 0) / n) : "–"}</td></tr>`;
+        const n = x.hechas.length, cr = x.hechas.filter(e => e.r), nr = cr.length;
+        return `<tr><td class="tabla-eq">${eq(c, x.i)}</td><td class="num">${n} / ${x.ms.length}</td>${AUTO_Q.map((q, k) => `<td class="num">${nr ? fmt1(cr.reduce((s, e) => s + e.r[k], 0) / nr) : "–"}</td>`).join("")}<td class="tot">${nr ? fmt1(cr.reduce((s, e) => s + media(e.r), 0) / nr) : "–"}</td></tr>`;
       }).join("")}</tbody></table></div>
-      <p class="note" style="margin-top:12px">Escala: 1 😟 poco · 2 🙂 regular · 3 😀 bien · 4 🤩 genial. Toca un equipo para ver cada partido. Las respuestas se guardan en este dispositivo: los equipos tienen que rellenarla aquí.</p></div>`;
+      <p class="note" style="margin-top:12px">Escala: 1 😟 poco · 2 🙂 regular · 3 😀 bien · 4 🤩 genial. Toca un equipo para ver cada partido. ${NUBE ? "Las respuestas llegan de todos los dispositivos." : "Las respuestas se guardan en este dispositivo: los equipos tienen que rellenarla aquí."}</p></div>`;
   }
   out += `<h2 style="margin-bottom:14px">${ed ? "Equipos" : "¿Qué equipo sois?"}</h2><div class="grid g2 stag">${info.map(x => `<a class="card atajo auto-eq${sel === x.i ? " on" : ""}" href="#/liga/${c}/autoevaluacion/${x.i}" style="--tc:${COLORES[x.i]}">${masc(c, x.i)}<div><b>${esc(nom(c, x.i))}</b><span>${x.hechas.length} de ${x.ms.length} autoevaluaciones hechas</span><div class="prog"><i style="--w:${x.ms.length ? Math.round(100 * x.hechas.length / x.ms.length) : 0}%"></i></div></div></a>`).join("")}</div>`;
   if(sel >= 0){
@@ -1540,7 +1560,7 @@ function htmlAuto(c){
       const res = empezado(a) ? (m.l === sel ? `${a.pl} : ${a.pv}` : `${a.pv} : ${a.pl}`) : "";
       let dcha;
       if(!ev) dcha = `<button type="button" class="btn peq" data-act="autoAbrir" data-m="${m.id}" data-eq="${sel}">Rellenar</button>`;
-      else if(ed) dcha = `<span class="auto-caras" title="${ev.r.join(" · ")}">${ev.r.map(v => CARAS[v - 1][0]).join("")}</span><b class="auto-med">${fmt1(media(ev.r))}</b><button type="button" class="dj-x" data-act="autoBorrar" data-k="${autoKey(c, m)}" data-s="${m.l === sel ? "l" : "v"}" aria-label="Borrar esta autoevaluación">×</button>`;
+      else if(ed && ev.r) dcha = `<span class="auto-caras" title="${ev.r.join(" · ")}">${ev.r.map(v => CARAS[v - 1][0]).join("")}</span><b class="auto-med">${fmt1(media(ev.r))}</b><button type="button" class="dj-x" data-act="autoBorrar" data-k="${autoKey(c, m)}" data-s="${m.l === sel ? "l" : "v"}" aria-label="Borrar esta autoevaluación">×</button>`;
       else dcha = `<span class="badge fin">✅ Hecha</span>`;
       return `<li class="auto-row"><div class="auto-info"><small>${m.fin ? esc(m.titulo) : "Ronda " + (m.r + 1)}${res ? " · " + res : ""}</small><span>contra ${eq(c, rival)}</span></div>${dcha}</li>`;
     }).join("")}</ul></section>`;
@@ -1618,7 +1638,22 @@ document.addEventListener("click", e => {
       break;
     }
     case "scroll": { const d = document.getElementById(b.dataset.to); if(d) d.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block:"start" }); break; }
-    case "editar": estado.editar = !estado.editar; guardar(); render(); break;
+    case "editar":
+      if(nube.conf && !estado.editar){
+        if(!NUBE){ dialogo({ titulo: nube.error ? "Sin conexión con la nube" : "Conectando…", html: nube.error ? "<p>No se ha podido conectar con la nube, así que ahora no se puede editar. Revisa la conexión a internet y recarga la página.</p>" : "<p>Espera un momento: se está conectando con la nube.</p>" }); break; }
+        if(!nube.authListo){ dialogo({ titulo:"Conectando…", html:"<p>Espera un momento y vuelve a pulsar.</p>" }); break; }
+        if(!nube.admin){
+          dialogo({ titulo:"Entrar como profe", html:"<p>Para editar, entra con la cuenta de Google del profe. Los demás pueden consultar la liga y rellenar la autoevaluación sin entrar.</p>",
+            botones:[{ t:"Cancelar" }, { t:"Entrar con Google", cls:"", fn:() => hacerLogin(true) }] });
+          break;
+        }
+      }
+      estado.editar = !estado.editar; guardar(); render(); break;
+    case "entrarProfe": if(NUBE) hacerLogin(false); break;
+    case "salirProfe": if(NUBE) NUBE.salir(); break;
+    case "nubeSubir":
+      if(NUBE && nube.admin) confirmar("Subir los datos de este dispositivo", "Se subirán a la nube los equipos, resultados, puntos y autoevaluaciones que había en este dispositivo antes de conectarlo. Sustituirán a lo que haya en la nube de las tres ligas.", "Subir", subirCopiaAntes);
+      break;
     case "compartir": abrirCompartir(); break;
     case "copiar": {
       const inp = document.getElementById(b.dataset.de);
@@ -1742,11 +1777,18 @@ document.addEventListener("click", e => {
     }
     case "autoGuardar": {
       if(!autoForm || autoForm.r.some(x => !x)) break;
-      const cl = C(autoForm.c), k = autoForm.k;
-      if(!cl.auto[k]) cl.auto[k] = {};
-      if(!cl.auto[k][autoForm.s] || estado.editar) cl.auto[k][autoForm.s] = { r:autoForm.r.slice(), t:Date.now() };
+      const f = autoForm, cl = C(f.c), previo = cl.auto[f.k] && cl.auto[f.k][f.s];
       autoForm = null;
-      guardar(); dlg.close(); render(); lluvia();
+      dlg.close();
+      if(previo && !estado.editar){ render(); break; }
+      if(!cl.auto[f.k]) cl.auto[f.k] = {};
+      cl.auto[f.k][f.s] = { r: NUBE && !nube.admin ? null : f.r.slice(), t:Date.now() };
+      if(NUBE) NUBE.enviarAuto(f.c, f.k, f.s, f.r.slice()).catch(e => {
+        if(!previo && cl.auto[f.k]) delete cl.auto[f.k][f.s];
+        guardar(); render();
+        dialogo({ titulo:"No se ha guardado", html: e && e.code === "permission-denied" ? "<p>Esta autoevaluación ya estaba hecha. Si hay que repetirla, avisad al profe.</p>" : `<p>${esc(mensajeNube(e))}</p>` });
+      });
+      guardar(); render(); lluvia();
       break;
     }
     case "autoBorrar":
@@ -1921,10 +1963,247 @@ btnCuenta.addEventListener("click", () => {
   }, 1000);
 });
 
+/* ---------- sincronización con Firebase ---------- */
+const COPIA_ANTES = STORE + "-antes-nube";
+let sinAnim = false, repintarPend = false;
+if(nube.conf){
+  estado.editar = false;
+  try{
+    const vacio = JSON.stringify(normalizar(null).clases);
+    if(!localStorage.getItem(COPIA_ANTES) && JSON.stringify(estado.clases) !== vacio) localStorage.setItem(COPIA_ANTES, JSON.stringify(estado));
+  }catch(e){}
+}
+function mensajeNube(e){
+  const c = (e && e.code) || "";
+  if(c === "auth/unauthorized-domain") return "Falta autorizar este dominio en Firebase: Authentication → Configuración → Dominios autorizados.";
+  if(c === "auth/operation-not-allowed" || c === "auth/configuration-not-found") return "Falta activar el acceso con Google en Firebase: Authentication → Método de acceso.";
+  if(c === "auth/network-request-failed" || c === "unavailable") return "No hay conexión a internet.";
+  if(c === "auth/popup-blocked") return "El navegador ha bloqueado la ventana para entrar. Permite las ventanas emergentes y vuelve a intentarlo.";
+  if(c === "permission-denied") return "Firebase no da permiso para esta acción. Revisa que las reglas de Firestore estén publicadas.";
+  return e && e.message ? String(e.message).slice(0, 200) : "Error desconocido.";
+}
+function ligaParaNube(c){ const o = Object.assign({}, C(c)); delete o.alumnos; delete o.auto; return JSON.stringify(o); }
+function programarSubida(){ clearTimeout(nube.timer); nube.timer = setTimeout(subir, 700); }
+function fallo(e){ nube.error = mensajeNube(e); pintarNube(); }
+function subir(){
+  if(!NUBE || !nube.admin) return;
+  CURSOS.forEach(c => {
+    if(!nube.recibido[c]) return;
+    const json = ligaParaNube(c);
+    if(json === nube.ultimo[c]) return;
+    const antes = nube.ultimo[c];
+    nube.ultimo[c] = json;
+    NUBE.subirLiga(c, json).catch(e => { nube.ultimo[c] = antes; fallo(e); });
+  });
+  if(nube.autoRecibido) [...nube.autoRemoto].forEach(id => {
+    const p = id.split("_"), a = estado.clases[p[0]] && estado.clases[p[0]].auto[p[1]];
+    if(!a || !a[p[2]]){ nube.autoRemoto.delete(id); NUBE.borrarAuto(id).catch(fallo); }
+  });
+}
+function repintar(){
+  const a = document.activeElement;
+  if(a && /^(INPUT|TEXTAREA)$/.test(a.tagName) && a.closest("#main")){ repintarPend = true; return; }
+  const y = scrollY;
+  sinAnim = true; render(); sinAnim = false;
+  $("#main").classList.add("quieto");
+  $$(".rv").forEach(el => el.classList.add("ya", "in"));
+  scrollTo({ top:y, behavior:"instant" });
+}
+document.addEventListener("focusout", () => { if(repintarPend){ repintarPend = false; setTimeout(repintar, 60); } });
+function nubeEstado(o){
+  const eraAdmin = nube.admin, cambiaCuenta = "admin" in o || "usuario" in o;
+  Object.assign(nube, o);
+  if("usuario" in o) nube.authListo = true;
+  if(!nube.admin && estado.editar){ estado.editar = false; try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){} }
+  if(nube.admin && !eraAdmin) programarSubida();
+  pintarNube();
+  if(cambiaCuenta) repintar();
+}
+function nubeLiga(c, json, desdeCache){
+  nube.online = !desdeCache;
+  if(!desdeCache) nube.error = "";
+  if(json === null){
+    if(!desdeCache){
+      if(!nube.recibido[c]){ nube.recibido[c] = true; nube.ultimo[c] = ligaParaNube(c); }
+      nube.faltan.add(c);
+    }
+    pintarNube();
+    return;
+  }
+  nube.faltan.delete(c);
+  if(json !== nube.ultimo[c]){
+    let d = null;
+    try{ d = JSON.parse(json); }catch(e){}
+    if(d){
+      const local = C(c), nueva = normClase(Object.assign({}, d, { alumnos: local.alumnos }));
+      nueva.auto = local.auto;
+      estado.clases[c] = nueva;
+      nube.ultimo[c] = ligaParaNube(c);
+      try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){}
+      repintar();
+    }
+  }
+  if(!desdeCache && !nube.recibido[c]){ nube.recibido[c] = true; if(nube.admin) programarSubida(); }
+  pintarNube();
+}
+function nubeAuto(docs){
+  const por = { "4":{}, "5":{}, "6":{} }, ids = new Set();
+  docs.forEach(x => {
+    if(!por[x.c] || !/^([45]-\d-\d|F[45][ftq])$/.test(x.k) || (x.s !== "l" && x.s !== "v")) return;
+    const r = Array.isArray(x.r) && x.r.length === 5 && x.r.every(n => Number.isInteger(n) && n >= 1 && n <= 4) ? x.r.slice() : null;
+    (por[x.c][x.k] = por[x.c][x.k] || {})[x.s] = { r, t: x.t || 0 };
+    ids.add(x.id);
+  });
+  CURSOS.forEach(c => { C(c).auto = por[c]; });
+  nube.autoRemoto = ids; nube.autoRecibido = true;
+  try{ localStorage.setItem(STORE, JSON.stringify(estado)); }catch(e){}
+  repintar();
+}
+function hayCopiaAntes(){ try{ return !!localStorage.getItem(COPIA_ANTES); }catch(e){ return false; } }
+function pintarNube(){
+  const pie = $("#pieDatos");
+  if(pie) pie.textContent = NUBE ? "Datos sincronizados en la nube" : "Los datos se guardan en este dispositivo";
+  const el = $("#nubeInfo");
+  if(!el) return;
+  if(!nube.conf){ el.innerHTML = `<p class="note">Sin conectar: los datos se guardan solo en este dispositivo.</p>`; return; }
+  if(!NUBE){
+    el.innerHTML = nube.error ? `<p>⚠️ No se ha podido conectar con la nube. Recarga la página cuando tengas internet.</p><p class="note">${esc(nube.error)}</p>` : `<p class="note">Conectando con la nube…</p>`;
+    return;
+  }
+  const faltan = [...nube.faltan].sort().map(c => c + "º").join(", ");
+  const leido = Object.keys(nube.recibido).length > 0;
+  el.innerHTML = `<p>${nube.error && !leido ? "⚠️ Conectado a Firebase, pero no se pueden leer los datos." : nube.online ? "🟢 Conectado: todos los dispositivos ven los mismos datos." : "🟠 Sin conexión: se muestran los últimos datos guardados y los cambios se enviarán al volver internet."}</p>
+    ${nube.error ? `<p class="note">⚠️ ${esc(nube.error)}</p>` : ""}
+    <p>${nube.usuario ? `Has entrado como <b>${esc(nube.usuario)}</b>${nube.admin ? ": puedes editar las ligas y ver las autoevaluaciones." : ", pero esta cuenta no puede editar."}` : "No has entrado. Para editar o ver las autoevaluaciones, entra con la cuenta de Google del profe."}</p>
+    ${nube.admin && faltan ? `<p class="note">Aún no están en la nube: Liga de ${faltan}. Se subirán en cuanto las edites.</p>` : ""}
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      ${nube.usuario ? `<button class="btn sec" type="button" data-act="salirProfe">Cerrar sesión</button>` : `<button class="btn" type="button" data-act="entrarProfe">Entrar con Google</button>`}
+      ${nube.admin && hayCopiaAntes() ? `<button class="btn sec" type="button" data-act="nubeSubir">⬆️ Subir los datos que tenía este dispositivo</button>` : ""}
+    </div>`;
+}
+function hacerLogin(editarDespues){
+  NUBE.entrar().then(admin => {
+    if(!admin && !nube.usuario) return;
+    if(admin){ if(editarDespues){ estado.editar = true; guardar(); } render(); }
+    else dialogo({ titulo:"Esta cuenta no puede editar", html:`<p>Has entrado como <b>${esc(nube.usuario || "")}</b>, pero solo la cuenta del profe puede editar.</p>`,
+      botones:[{ t:"Cerrar" }, { t:"Cerrar sesión", cls:"", fn:() => NUBE.salir() }] });
+  }).catch(e => {
+    if(e && (e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request")) return;
+    dialogo({ titulo:"No se ha podido entrar", html:`<p>${esc(mensajeNube(e))}</p>` });
+  });
+}
+function subirCopiaAntes(){
+  let d = null;
+  try{ d = normalizar(JSON.parse(localStorage.getItem(COPIA_ANTES))); }catch(e){}
+  if(!d) return;
+  CURSOS.forEach(c => {
+    const auto = d.clases[c].auto;
+    estado.clases[c] = Object.assign(d.clases[c], { auto:{} });
+    Object.keys(auto).forEach(k => ["l","v"].forEach(s => {
+      if(auto[k][s]){ estado.clases[c].auto[k] = estado.clases[c].auto[k] || {}; estado.clases[c].auto[k][s] = auto[k][s]; NUBE.enviarAuto(c, k, s, auto[k][s].r).catch(fallo); }
+    }));
+    nube.ultimo[c] = undefined;
+  });
+  try{ localStorage.setItem(STORE, JSON.stringify(estado)); localStorage.removeItem(COPIA_ANTES); }catch(e){}
+  subir(); render(); lluvia();
+  dialogo({ titulo:"Datos subidos", html:"<p>Los equipos, resultados, puntos y autoevaluaciones de este dispositivo ya están en la nube.</p>" });
+}
+window.__datchball = {
+  nubeLista(api){ NUBE = api; pintarNube(); repintar(); },
+  nubeError(msg){ nube.error = msg; pintarNube(); },
+  nubeEstado, nubeLiga, nubeAuto, mensajeNube
+};
+
 /* ---------- arranque ---------- */
 try{ const t = localStorage.getItem(STORE + "-tema"); if(t) document.documentElement.setAttribute("data-theme", t); }catch(e){}
 render();
 })();
+</script>
+
+<script type="module">
+const D = window.__datchball, cfg = window.DATCHBALL_FIREBASE;
+if(D && cfg){
+  try{
+    const V = "https://www.gstatic.com/firebasejs/10.12.2/";
+    const [A, U, F] = await Promise.all([import(V + "firebase-app.js"), import(V + "firebase-auth.js"), import(V + "firebase-firestore.js")]);
+    const app = A.initializeApp(cfg);
+    let db;
+    try{ db = F.initializeFirestore(app, { localCache: F.persistentLocalCache({ tabManager: F.persistentMultipleTabManager() }) }); }
+    catch(e){ db = F.getFirestore(app); }
+    const auth = U.getAuth(app);
+    const proveedor = new U.GoogleAuthProvider();
+    proveedor.setCustomParameters({ prompt: "select_account" });
+    const CLAVE = "datchball-profe";
+
+    // Solo la cuenta del profe puede leer la colección «auto»: si la lectura funciona, es el profe.
+    async function esProfe(user){
+      if(!user) return false;
+      try{
+        await F.getDocs(F.query(F.collection(db, "auto"), F.limit(1)));
+        try{ localStorage.setItem(CLAVE, user.uid); }catch(e){}
+        return true;
+      }catch(e){
+        if(e && e.code === "permission-denied"){ try{ localStorage.removeItem(CLAVE); }catch(x){} return false; }
+        try{ return localStorage.getItem(CLAVE) === user.uid; }catch(x){ return false; }
+      }
+    }
+
+    let quitarAuto = null, modoAuto = null;
+    function escucharAuto(admin){
+      if(modoAuto === admin) return;
+      modoAuto = admin;
+      if(quitarAuto) quitarAuto();
+      quitarAuto = F.onSnapshot(F.collection(db, admin ? "auto" : "autoHecha"), snap => {
+        D.nubeAuto(snap.docs.map(d => {
+          const x = d.data(), p = d.id.split("_");
+          return { id: d.id, c: p[0], k: p[1], s: p[2], r: admin ? x.r : null, t: x.t && x.t.toMillis ? x.t.toMillis() : 0 };
+        }));
+      }, e => D.nubeEstado({ error: D.mensajeNube(e) }));
+    }
+
+    ["4","5","6"].forEach(c => F.onSnapshot(F.doc(db, "ligas", c), { includeMetadataChanges: true }, snap => {
+      if(snap.metadata.hasPendingWrites) return;
+      D.nubeLiga(c, snap.exists() ? (snap.data().datos || null) : null, snap.metadata.fromCache);
+    }, e => D.nubeEstado({ error: D.mensajeNube(e) })));
+
+    U.onAuthStateChanged(auth, async user => {
+      const admin = await esProfe(user);
+      D.nubeEstado({ usuario: user ? (user.email || user.displayName || "") : null, admin });
+      escucharAuto(admin);
+    });
+
+    D.nubeLista({
+      async entrar(){
+        let cred;
+        try{ cred = await U.signInWithPopup(auth, proveedor); }
+        catch(e){
+          if(e && (e.code === "auth/popup-blocked" || e.code === "auth/operation-not-supported-in-environment")){ await U.signInWithRedirect(auth, proveedor); return false; }
+          throw e;
+        }
+        const admin = await esProfe(cred.user);
+        D.nubeEstado({ usuario: cred.user.email || cred.user.displayName || "", admin });
+        escucharAuto(admin);
+        return admin;
+      },
+      salir: () => U.signOut(auth),
+      subirLiga: (c, json) => F.setDoc(F.doc(db, "ligas", c), { datos: json, t: F.serverTimestamp() }),
+      enviarAuto(c, k, s, r){
+        const id = `${c}_${k}_${s}`, b = F.writeBatch(db);
+        b.set(F.doc(db, "auto", id), { c, k, s, r, t: F.serverTimestamp() });
+        b.set(F.doc(db, "autoHecha", id), { t: F.serverTimestamp() });
+        return b.commit();
+      },
+      borrarAuto(id){
+        const b = F.writeBatch(db);
+        b.delete(F.doc(db, "auto", id));
+        b.delete(F.doc(db, "autoHecha", id));
+        return b.commit();
+      }
+    });
+  }catch(e){
+    D.nubeError(D.mensajeNube(e));
+  }
+}
 </script>
 </body>
 </html>

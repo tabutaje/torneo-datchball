@@ -1,0 +1,61 @@
+rules_version = '2';
+
+// Reglas del torneo de datchball.
+// Antes de publicarlas, cambia CORREO_DEL_PROFE@gmail.com por la cuenta de Google con la que vas a editar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function esProfe() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == "CORREO_DEL_PROFE@gmail.com";
+    }
+
+    function cursoOk(c) {
+      return c in ['4', '5', '6'];
+    }
+
+    function notaOk(n) {
+      return n is int && n >= 1 && n <= 4;
+    }
+
+    // Ligas: todo el mundo puede verlas; solo el profe puede cambiarlas.
+    match /ligas/{curso} {
+      allow read: if cursoOk(curso);
+      allow write: if esProfe() && cursoOk(curso)
+        && request.resource.data.keys().hasOnly(['datos', 't'])
+        && request.resource.data.datos is string
+        && request.resource.data.datos.size() < 900000
+        && request.resource.data.t == request.time;
+    }
+
+    // Autoevaluaciones: cualquier equipo puede enviar la suya una sola vez;
+    // solo el profe puede verlas, cambiarlas o borrarlas.
+    match /auto/{id} {
+      allow read, update, delete: if esProfe();
+      allow create: if request.resource.data.keys().hasOnly(['c', 'k', 's', 'r', 't'])
+        && cursoOk(request.resource.data.c)
+        && request.resource.data.k is string
+        && request.resource.data.k.matches('^([45]-[0-9]-[0-9]|F[45][ftq])$')
+        && request.resource.data.s in ['l', 'v']
+        && id == request.resource.data.c + '_' + request.resource.data.k + '_' + request.resource.data.s
+        && request.resource.data.r is list
+        && request.resource.data.r.size() == 5
+        && notaOk(request.resource.data.r[0])
+        && notaOk(request.resource.data.r[1])
+        && notaOk(request.resource.data.r[2])
+        && notaOk(request.resource.data.r[3])
+        && notaOk(request.resource.data.r[4])
+        && request.resource.data.t == request.time;
+    }
+
+    // Marca pública de «autoevaluación hecha», sin las notas.
+    match /autoHecha/{id} {
+      allow read: if true;
+      allow create, update: if existsAfter(/databases/$(database)/documents/auto/$(id))
+        && request.resource.data.keys().hasOnly(['t'])
+        && request.resource.data.t == request.time;
+      allow delete: if esProfe();
+    }
+  }
+}
